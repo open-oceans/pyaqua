@@ -1,43 +1,35 @@
-# pyspotter: Simple CLI for SofarOcean API
+# pyaqua: Simple CLI for Aqualink API
 
 [![Twitter URL](https://img.shields.io/twitter/follow/samapriyaroy?style=social)](https://twitter.com/intent/follow?screen_name=samapriyaroy)
-![](https://tokei.rs/b1/github/samapriya/pyspotter?category=code)
-![](https://tokei.rs/b1/github/samapriya/pyspotter?category=files)
-[![CI pyspotter](https://github.com/samapriya/pyspotter/actions/workflows/package_ci.yml/badge.svg)](https://github.com/samapriya/pyspotter/actions/workflows/package_ci.yml)
-![PyPI - License](https://img.shields.io/pypi/l/pyspotter)
-[![Downloads](https://pepy.tech/badge/pyspotter)](https://pepy.tech/project/pyspotter)
-![PyPI](https://img.shields.io/pypi/v/pyspotter)
-
 
 ## Table of contents
 * [Installation](#installation)
 * [Getting started](#getting-started)
-* [pyspotter Simple CLI for Sofarocean API](#pyspotter-simple-cli-for-sofarocean-api)
-    * [pyspotter auth](#pyspotter-auth)
-    * [pyspotter reset](#pyspotter-reset)
-    * [pyspotter devlist](#pyspotter-devlist)
-    * [pyspotter spotcheck](#pyspotter-spotcheck)
-    * [pyspotter spotdata](#pyspotter-spotdata)
+* [pyaqua Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api)
+    * [site list](#site-list)
+    * [site live](#site-live)
+    * [site-daily](#site-daily)
+    * [site-timeseries](#site-timeseries)
 
 ## Installation
 This assumes that you have native python & pip installed in your system, you can test this by going to the terminal (or windows command prompt) and trying
 
 ```python``` and then ```pip list```
 
-**pyspotter only support Python v3.4 or higher**
+**pyaqua only support Python v3.4 or higher**
 
-To install **pyspotter: Simple CLI for SofarOcean API** you can install using two methods.
+To install **pyaqua: Simple CLI for Aqualink API** you can install using two methods.
 
-```pip install pyspotter```
+```pip install pyaqua```
 
 or you can also try
 
 ```
-git clone https://github.com/samapriya/pyspotter.git
-cd pyspotter
+git clone https://github.com/samapriya/pyaqua.git
+cd pyaqua
 python setup.py install
 ```
-For Linux use sudo or try ```pip install pyspotter --user```.
+For Linux use sudo or try ```pip install pyaqua --user```.
 
 I recommend installation within a virtual environment. Find more information on [creating virtual environments here](https://docs.python.org/3/library/venv.html).
 
@@ -46,116 +38,43 @@ I recommend installation within a virtual environment. Find more information on 
 As usual, to print help:
 
 ```
-pyspotter -h
-usage: pyspotter [-h] {auth,reset,devlist,spot-check,spot-data} ...
+usage: pyaqua [-h] {site-list,site-live,site-daily,site-timeseries} ...
 
-Simple CLI for Sofarocean API
+Simple CLI for Aqualink API
 
 positional arguments:
-  {auth,reset,devlist,spot-check,spot-data}
-    auth                Authenticates and saves your API token
-    reset               Regenerates your API token
-    devlist             Print lists of devices available under your account
-    spot-check          Spot check a Spotter location and time
-    spot-data           Export Spotter Data based on Spotter ID & grouped by date
+  {site-list,site-live,site-daily,site-timeseries}
+    site-list           Print lists of Site Name and ID with spotters
+    site-live           Get most recent/live info from a site
+    site-daily          Print daily data info for a site
+    site-timeseries     Print daily data info for a site
 
 optional arguments:
   -h, --help            show this help message and exit
 ```
 
-To obtain help for specific functionality, simply call it with _help_ switch, e.g.: `pyspotter spot-check -h`. If you didn't install pyspotter, then you can run it just by going to *pyspotter* directory and running `python pyspotter.py [arguments go here]`
+To obtain help for specific functionality, simply call it with _help_ switch, e.g.: `pyaqua site-live -h`. If you didn't install pyaqua, then you can run it just by going to *pyaqua* directory and running `python pyaqua.py [arguments go here]`
 
-## pyspotter Simple CLI for Sofarocean API
-The tool is designed to interact with the SofarOcean API, for now this is focused only on the spotter endpoints.
+## pyaqua Simple CLI for [Aqualink API](aqualink.org)
+The tool is designed to interact with the Aqualink.org API, for now this is focused only on the spotter endpoints.
 
-### pyspotter auth
-This allows you to save your authentication token, this is then used for authentication for requests. This uses your email and your password to fetch the token.
+### site list
+This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id.
 
-``` pyspotter auth```
-
-### pyspotter reset
-For some reason if you need to reset your token , this will allow you to use your current authentication to reset and fetch your new token. This requires no user input
-
-```pyspotter reset```
-
-### pyspotter devlist
-This will simply print the names of all devices to which you have access, instead of trying to remember the list. This tool requires no user input.
-
-```
-usage: pyspotter devlist [-h]
-
-optional arguments:
-  -h, --help  show this help message and exit
-
-```
-
-usage is simply
-
-```pyspotter devlist```
+![site_list](https://user-images.githubusercontent.com/6677629/145728096-dd15a9a1-e8c7-43ca-9884-0a6e7842b689.gif)
 
 
-### pyspotter spotcheck
-This tool is built to fetch simply the latest information from the spotter including battery, humidity, power and lat long. Since these spotter can move across multiple time zones, it uses the lat long to estimate the time zone and converts the UTC time to local time for the spotter.
+### site-live
+This allows to get the most updated/live information about a site based on a site ID from the idlist. The tool parses the output as an indent JSON object.
 
-```
-pyspotter spot-check -h
+![site_live](https://user-images.githubusercontent.com/6677629/145728182-db54c3ce-3a4d-4b45-852b-5c1ae5a97376.gif)
 
-usage: pyspotter spot-check [-h] --sid SID
+### site daily
+This allows to get the most daily data for a site based on a site ID from the idlist. The tool parses the daily output as an indented JSON and you can specify months since today as well as data type like wind/wave/temp.
 
-optional arguments:
-  -h, --help  show this help message and exit
+![site_daily](https://user-images.githubusercontent.com/6677629/145728380-11b0acaf-8a9c-4c90-904a-675f8364a5f6.gif)
 
-Required named arguments.:
-  --sid SID   Spotter ID
-```
+### site timeseries
+This allows to get the most daily data for a site based on a site ID from the idlist. The tool exports the time series data for both NOAA and spotter datasets as CSV to a given folder. It attaches the site_id to the CSV filename **spotter_dhw_siteid** for example **spotter_dhw_1113**
 
-Example usage would be
-
-```
-pyspotter spot-check --sid 0320
-```
-
-
-### pyspotter spotdata
-This tool was designed to get the datasets out of the spotter. It seems that API currently limited temporal data, and the best way to group seemed to be using dates. This script uses the result JSON objects, and adds a date field from the timestamp to make the grouping easy, since timestamps are unique. This then writes these CSV file with column headers and can export both wind and wave data as needed.
-
-```
-usage: pyspotter spot-data [-h] --sid SID --dtype DTYPE --folder FOLDER
-
-optional arguments:
-  -h, --help       show this help message and exit
-
-Required named arguments.:
-  --sid SID        Spotter ID
-  --dtype DTYPE    Data type: wind/wave/sst
-  --folder FOLDER  Folder to export CSV data
-
-```
-
-Sample setup would be
-
-```
-pyspotter spot-data --sid 1234 --dtype wave --folder "full path to folder"
-```
-
-
-## Changelog
-
-#### v0.0.5
-- added sea surface temperature parsing for spot data
-- minor general improvements
-
-#### v0.0.4
-- added spot id to spot data export and metadata
-- gracefully handles missing data and better error handling
-- general improvements
-
-#### v0.0.3
-- added spot check tool to get latest info about spotter
-- spot data now exports CSV after grouping by date
-- general improvements
-
-#### v0.0.2
-- added time zone parser from spotter lat long
-- now prints UTC and local time for spotter
-- pretty prints output
+![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)

@@ -19,12 +19,11 @@ import json
 import sys
 import pkg_resources
 import argparse
-import time
-import csv
 import os
 import datetime
+import pandas as pd
 from rapidfuzz import fuzz
-from dateutil import parser
+from collections import Counter
 from bs4 import BeautifulSoup
 from dateutil.relativedelta import *
 
@@ -62,6 +61,8 @@ class Solution:
 ob1 = Solution()
 
 # Get package version
+
+
 def pyaqua_version():
     url = "https://pypi.org/project/pyaqua/"
     source = requests.get(url)
@@ -102,31 +103,36 @@ def pyaqua_version():
         )
 
 
-# pyaqua_version()
+pyaqua_version()
 
 
 def sitelist(sname):
     sid_list = []
+    status_list = []
     response = requests.get("https://ocean-systems.uc.r.appspot.com/api/sites")
     for items in response.json():
         if items["sensorId"] is not None:
             sid_list.append({items["name"]: items["id"]})
-    print(f"Found a total of {len(sid_list)} sites with spotters" + "\n")
+            status_list.append(items["status"])
     for site in sid_list:
         for name, sid in site.items():
             if sname is not None:
                 rat = fuzz.ratio(sname.lower(), name.lower())
-            if sname is not None and rat > 70:
+            if sname is not None and rat > 75:
                 print(f"{name}: {sid}")
             elif sname is None:
                 print(f"{name}: {sid}")
+    print(
+        "\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
+    print("Spoter status distribution :")
+    print(json.dumps(Counter(status_list)))
 
 
 def sitelist_from_parser(args):
     sitelist(sname=args.name)
 
 
-#### Get a quick check on a site
+# Get a quick check on a site
 def site_live(sid):
     live_data = requests.get(
         f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}/live_data"
@@ -135,7 +141,8 @@ def site_live(sid):
         print(json.dumps(live_data.json(), indent=4))
     else:
         print(
-            "Failed to get live data with error code {}".format(live_data.status_code)
+            "Failed to get live data with error code {}".format(
+                live_data.status_code)
         )
 
 
@@ -143,7 +150,7 @@ def sitelive_from_parser(args):
     site_live(sid=args.sid)
 
 
-#### Get daily data for a site
+# Get daily data for a site
 def site_daily(delta, sid, dtype):
     d = datetime.datetime.utcnow()
     current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -181,16 +188,83 @@ def site_daily(delta, sid, dtype):
                     or dset.capitalize() in key
                     or dset.upper() in key
                 }
-                ext_dt = {key: value for key, value in resp.items() if key == "date"}
+                ext_dt = {key: value for key,
+                          value in resp.items() if key == "date"}
                 combined = ext_dt.copy()
                 combined.update(ext)
                 print(json.dumps(combined, indent=2))
             else:
                 print(json.dumps(resp, indent=2))
+    else:
+        print(
+            f"Daily date fetch failed with error: {response.status_code} & {response.text}"
+        )
 
 
 def sitedaily_from_parser(args):
     site_daily(sid=args.sid, delta=args.months, dtype=args.dtype)
+
+
+# Function to export time series data from site
+def site_timeseries(delta, sid, dtype, fpath):
+    d = datetime.datetime.utcnow()
+    current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if delta is None:
+        delta = 3
+    past_utc = d + relativedelta(months=-int(delta))
+    past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    print(f"Time series from {past_utc} to {current_utc}")
+
+    if dtype is not None:
+        if dtype == "temp":
+            metrics = "bottom_temperature,top_temperature"
+        if dtype == "wave":
+            metrics = "significant_wave_height,wave_peak_period,wave_mean_direction"
+        if dtype == "sat_temp":
+            metrics = "satellite_temperature"
+        if dtype == "wind":
+            metrics = "wind_speed,wind_direction"
+        if dtype == "alert":
+            metrics = "alert,weekly_alert"
+        if dtype == "anomaly":
+            metrics = "sst_anomaly"
+        if dtype == "dhw":
+            metrics = "dhw"
+    elif dtype is None:
+        metrics = "bottom_temperature,top_temperature,significant_wave_height,wave_peak_period,wave_mean_direction,satellite_temperature,wind_speed,wind_direction,alert,weekly_alert,sst_anomaly,dhw"
+    else:
+        print("Datatype is not supported")
+
+    params = {"start": past_utc, "end": current_utc,
+              "metrics": metrics, "hourly": True}
+
+    response = requests.get(
+        f"https://ocean-systems.uc.r.appspot.com/api/time-series/sites/{sid}",
+        headers=headers,
+        params=params,
+    )
+    if response.status_code == 200:
+        resp = response.json()
+        for metric in metrics.split(","):
+            if resp["noaa"][metric]:
+                print(f"Processing noaa_{metric}_{sid}")
+                fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
+                df = pd.DataFrame(resp["noaa"][metric])
+                df.to_csv(fname, index=False)
+            if resp["spotter"][metric]:
+                print(f"Processing spotter_{metric}_{sid}")
+                fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
+                df = pd.DataFrame(resp["spotter"][metric])
+                df.to_csv(fname, index=False)
+    else:
+        print(
+            f"Time series failed with error: {response.status_code} & {response.text}"
+        )
+
+
+def timeseries_from_parser(args):
+    site_timeseries(sid=args.sid, delta=args.months,
+                    dtype=args.dtype, fpath=args.fpath)
 
 
 def main(args=None):
@@ -200,23 +274,27 @@ def main(args=None):
     parser_sitelist = subparsers.add_parser(
         "site-list", help="Print lists of Site Name and ID with spotters"
     )
-    optional_named = parser_sitelist.add_argument_group("Optional named arguments")
+    optional_named = parser_sitelist.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument("--name", help="Pass site name", default=None)
     parser_sitelist.set_defaults(func=sitelist_from_parser)
 
     parser_sitelive = subparsers.add_parser(
-        "site-live", help="Get most recent/live infor from a site"
+        "site-live", help="Get most recent/live info from a site"
     )
-    required_named = parser_sitelive.add_argument_group("Required named arguments.")
+    required_named = parser_sitelive.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     parser_sitelive.set_defaults(func=sitelive_from_parser)
 
     parser_sitedaily = subparsers.add_parser(
         "site-daily", help="Print daily data info for a site"
     )
-    required_named = parser_sitedaily.add_argument_group("Required named arguments.")
+    required_named = parser_sitedaily.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_sitedaily.add_argument_group("Optional named arguments")
+    optional_named = parser_sitedaily.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument(
         "--months", help="Total number of months from today", default=None
     )
@@ -224,6 +302,26 @@ def main(args=None):
         "--dtype", help="Data type: wind/wave/temp", default=None
     )
     parser_sitedaily.set_defaults(func=sitedaily_from_parser)
+
+    parser_timeseries = subparsers.add_parser(
+        "site-timeseries", help="Print daily data info for a site"
+    )
+    required_named = parser_timeseries.add_argument_group(
+        "Required named arguments.")
+    required_named.add_argument("--sid", help="Site ID", required=True)
+    required_named.add_argument(
+        "--fpath", help="Folder path for export", required=True)
+    optional_named = parser_timeseries.add_argument_group(
+        "Optional named arguments")
+    optional_named.add_argument(
+        "--months", help="Total number of months from today", default=None
+    )
+    optional_named.add_argument(
+        "--dtype",
+        help="Data type: wind/wave/temp/sat_temp/alert/anomaly/dhw",
+        default=None,
+    )
+    parser_timeseries.set_defaults(func=timeseries_from_parser)
 
     args = parser.parse_args()
 

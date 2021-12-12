@@ -5,12 +5,12 @@ def readme():
     with open('README.md') as f:
         return f.read()
 setuptools.setup(
-    name='pyspotter',
-    version='0.0.5',
+    name='pyaqua',
+    version='0.0.1',
     packages=find_packages(),
-    url='https://github.com/samapriya/pyspotter',
-    install_requires=['requests>=2.23.1','timezonefinder>=5.2.0','pytz>=2020.1','beautifulsoup4>=4.9.3','python_dateutil>=2.8.2'],
-    license='MIT',
+    url='https://github.com/samapriya/pyaqua',
+    install_requires=['requests>=2.23.1','beautifulsoup4>=4.9.3','pandas>=1.3.3','python_dateutil>=2.8.2','rapidfuzz>=1.9.0'],
+    license='Apache 2.0',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     classifiers=[
@@ -25,10 +25,11 @@ setuptools.setup(
     ],
     author='Samapriya Roy',
     author_email='samapriya.roy@gmail.com',
-    description='Simple CLI for SofarOcean API',
+    description='Simple CLI for Aqualink API',
     entry_points={
         'console_scripts': [
-            'pyspotter=pyspotter.pyspotter:main',
+            'pyaqua=pyaqua.pyaqua:main',
         ],
     },
 )
+
