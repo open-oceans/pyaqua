@@ -16,7 +16,7 @@ This assumes that you have native python & pip installed in your system, you can
 
 ```python``` and then ```pip list```
 
-**pyaqua only support Python v3.4 or higher**
+**pyaqua only support Python v3.7 or higher**
 
 To install **pyaqua: Simple CLI for Aqualink API** you can install using two methods.
 
