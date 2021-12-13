@@ -4,7 +4,7 @@
 [![CI pyaqua](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml/badge.svg)](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml)
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5775224.svg)](https://doi.org/10.5281/zenodo.5775224)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5775509.svg)](https://doi.org/10.5281/zenodo.5775509)
 
 
 Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while. This tool is designed for only only those sites associated with a spotter.
@@ -14,8 +14,8 @@ Disclaimer: This is an unofficial tool. Is not licensed or endorsed by Aqualink 
 #### Citation
 
 ```
-Samapriya Roy. (2021). samapriya/pyaqua: Simple CLI for Aqualink Org (0.0.1).
-Zenodo. https://doi.org/10.5281/zenodo.5775224
+Samapriya Roy. (2021). samapriya/pyaqua: Simple CLI for Aqualink Org (0.0.3).
+Zenodo. https://doi.org/10.5281/zenodo.5775509
 ```
 
 Readme Docs [available online](https://samapriya.github.io/pyaqua)
@@ -102,3 +102,11 @@ This allows to get the most daily data for a site based on a site ID from the id
 This allows to get the most daily data for a site based on a site ID from the idlist. The tool exports the time series data for both NOAA and spotter datasets as CSV to a given folder. It attaches the site_id to the CSV filename **spotter_dhw_siteid** for example **spotter_dhw_1113**
 
 ![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
+
+### Changelog
+
+#### v0.0.3
+- Added site info tool for detailed information on site.
+
+#### v0.0.2
+- Added readme and created new branch.
