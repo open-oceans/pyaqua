@@ -122,14 +122,42 @@ def sitelist(sname):
                 print(f"{name}: {sid}")
             elif sname is None:
                 print(f"{name}: {sid}")
-    print(
-        "\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
+    print("\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
     print("Spoter status distribution :")
     print(json.dumps(Counter(status_list)))
 
 
 def sitelist_from_parser(args):
     sitelist(sname=args.name)
+
+
+# Get a quick check on a site
+def site_info(sid, ext):
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    if response.status_code == 200:
+        keys_to_remove = ["admins", "historicalMonthlyMean", "stream", "videoStream"]
+        site_inf = response.json()
+        if ext is not None and ext == "historical":
+            ext = "historicalMonthlyMean"
+            keys_to_remove.remove(ext)
+        elif ext is not None and ext == "admins":
+            ext = "admins"
+            keys_to_remove.remove(ext)
+        elif ext is None:
+            pass
+        else:
+            sys.exit("Extra info key not found")
+        for key in keys_to_remove:
+            site_inf.pop(key)
+        print(json.dumps(site_inf, indent=4))
+    else:
+        print(
+            f"Failed to get site information with error {response.status_code}: {response.text}"
+        )
+
+
+def siteinfo_from_parser(args):
+    site_info(sid=args.sid, ext=args.extra)
 
 
 # Get a quick check on a site
@@ -141,8 +169,7 @@ def site_live(sid):
         print(json.dumps(live_data.json(), indent=4))
     else:
         print(
-            "Failed to get live data with error code {}".format(
-                live_data.status_code)
+            "Failed to get live data with error code {}".format(live_data.status_code)
         )
 
 
@@ -188,8 +215,7 @@ def site_daily(delta, sid, dtype):
                     or dset.capitalize() in key
                     or dset.upper() in key
                 }
-                ext_dt = {key: value for key,
-                          value in resp.items() if key == "date"}
+                ext_dt = {key: value for key, value in resp.items() if key == "date"}
                 combined = ext_dt.copy()
                 combined.update(ext)
                 print(json.dumps(combined, indent=2))
@@ -235,8 +261,7 @@ def site_timeseries(delta, sid, dtype, fpath):
     else:
         print("Datatype is not supported")
 
-    params = {"start": past_utc, "end": current_utc,
-              "metrics": metrics, "hourly": True}
+    params = {"start": past_utc, "end": current_utc, "metrics": metrics, "hourly": True}
 
     response = requests.get(
         f"https://ocean-systems.uc.r.appspot.com/api/time-series/sites/{sid}",
@@ -263,8 +288,7 @@ def site_timeseries(delta, sid, dtype, fpath):
 
 
 def timeseries_from_parser(args):
-    site_timeseries(sid=args.sid, delta=args.months,
-                    dtype=args.dtype, fpath=args.fpath)
+    site_timeseries(sid=args.sid, delta=args.months, dtype=args.dtype, fpath=args.fpath)
 
 
 def main(args=None):
@@ -274,27 +298,34 @@ def main(args=None):
     parser_sitelist = subparsers.add_parser(
         "site-list", help="Print lists of Site Name and ID with spotters"
     )
-    optional_named = parser_sitelist.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_sitelist.add_argument_group("Optional named arguments")
     optional_named.add_argument("--name", help="Pass site name", default=None)
     parser_sitelist.set_defaults(func=sitelist_from_parser)
+
+    parser_siteinfo = subparsers.add_parser(
+        "site-info", help="Print detailed information for a site"
+    )
+    required_named = parser_siteinfo.add_argument_group("Required named arguments.")
+    required_named.add_argument("--sid", help="Site ID", required=True)
+    optional_named = parser_siteinfo.add_argument_group("Optional named arguments")
+    optional_named.add_argument(
+        "--extra", help="extra info keywords: historical/admins", default=None
+    )
+    parser_siteinfo.set_defaults(func=siteinfo_from_parser)
 
     parser_sitelive = subparsers.add_parser(
         "site-live", help="Get most recent/live info from a site"
     )
-    required_named = parser_sitelive.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_sitelive.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     parser_sitelive.set_defaults(func=sitelive_from_parser)
 
     parser_sitedaily = subparsers.add_parser(
         "site-daily", help="Print daily data info for a site"
     )
-    required_named = parser_sitedaily.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_sitedaily.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_sitedaily.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_sitedaily.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--months", help="Total number of months from today", default=None
     )
@@ -306,13 +337,10 @@ def main(args=None):
     parser_timeseries = subparsers.add_parser(
         "site-timeseries", help="Print daily data info for a site"
     )
-    required_named = parser_timeseries.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_timeseries.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    required_named.add_argument(
-        "--fpath", help="Folder path for export", required=True)
-    optional_named = parser_timeseries.add_argument_group(
-        "Optional named arguments")
+    required_named.add_argument("--fpath", help="Folder path for export", required=True)
+    optional_named = parser_timeseries.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--months", help="Total number of months from today", default=None
     )

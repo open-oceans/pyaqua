@@ -97,6 +97,7 @@ nav:
   - General Installation: installation.md
   - Site list and Status:
     - Site list and ID: projects/site-list.md
+    - Site information: projects/site-info.md
     - Site live update: projects/site-live.md
   - Site Data:
     - Daily Data for Site: projects/site-daily.md

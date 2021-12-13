@@ -7,7 +7,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5775224.svg)](https://doi.org/10.5281/zenodo.5775224)
 
 
-Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while.
+Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while. This tool is designed for only only those sites associated with a spotter.
 
 Disclaimer: This is an unofficial tool. Is not licensed or endorsed by Aqualink org. It is created and maintained by Samapriya Roy.
 
@@ -25,6 +25,7 @@ Readme Docs [available online](https://samapriya.github.io/pyaqua)
 * [Getting started](#getting-started)
 * [pyaqua Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api)
     * [site list](#site-list)
+    * [site info](#site info)
     * [site live](#site-live)
     * [site-daily](#site-daily)
     * [site-timeseries](#site-timeseries)
@@ -56,13 +57,14 @@ I recommend installation within a virtual environment. Find more information on 
 As usual, to print help:
 
 ```
-usage: pyaqua [-h] {site-list,site-live,site-daily,site-timeseries} ...
+usage: pyaqua [-h] {site-list,site-info,site-live,site-daily,site-timeseries} ...
 
 Simple CLI for Aqualink API
 
 positional arguments:
-  {site-list,site-live,site-daily,site-timeseries}
+  {site-list,site-info,site-live,site-daily,site-timeseries}
     site-list           Print lists of Site Name and ID with spotters
+    site-info           Get detailed info about a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
     site-timeseries     Print daily data info for a site
@@ -81,6 +83,10 @@ This allows you to get existing sites with spotters attached and print Site Name
 
 ![site_list](https://user-images.githubusercontent.com/6677629/145728096-dd15a9a1-e8c7-43ca-9884-0a6e7842b689.gif)
 
+### site info
+The site info tool uses the site ID to get detailed information about the setup, location, time zone, status information to name a few. Historical means are dropped along with admin data for ease of parsing and since they do not add a large amount of value for general purpose users directly. The user does have the option to get to the complete admin or historical data if needed
+
+![site-info](https://user-images.githubusercontent.com/6677629/145769759-9c09dab3-4b45-472a-a62c-2d327ea2255c.gif)
 
 ### site-live
 This allows to get the most updated/live information about a site based on a site ID from the idlist. The tool parses the output as an indent JSON object.
