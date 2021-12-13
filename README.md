@@ -5,6 +5,10 @@
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 
+Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while.
+
+Disclaimer: This is an unofficial tool. Is not licensed or endorsed by Aqualink org. It is created and maintained by Samapriya Roy.
+
 ## Table of contents
 * [Installation](#installation)
 * [Getting started](#getting-started)
