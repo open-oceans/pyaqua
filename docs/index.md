@@ -13,5 +13,6 @@ Aqualink is a philanthropic engineering organization working on building ocean c
 #### Citation
 
 ```
-
+Samapriya Roy. (2021). samapriya/pyaqua: Simple CLI for Aqualink Org (0.0.1).
+Zenodo. https://doi.org/10.5281/zenodo.5775224
 ```
