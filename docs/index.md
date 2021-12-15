@@ -1,4 +1,4 @@
-# pyaqua: Simple CLI for Allen Coral Atlas
+# pyaqua: Simple CLI for Aqualink.org API
 
 [![Twitter URL](https://img.shields.io/twitter/follow/samapriyaroy?style=social)](https://twitter.com/intent/follow?screen_name=samapriyaroy)
 [![CI pyaqua](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml/badge.svg)](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml)
