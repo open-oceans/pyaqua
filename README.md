@@ -64,10 +64,10 @@ Simple CLI for Aqualink API
 positional arguments:
   {site-list,site-info,site-live,site-daily,site-timeseries}
     site-list           Print lists of Site Name and ID with spotters
-    site-info           Get detailed info about a site
+    site-info           Print detailed information for a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
-    site-timeseries     Print daily data info for a site
+    site-timeseries     Exports timeseries data for a site
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -104,6 +104,9 @@ This allows to get the most daily data for a site based on a site ID from the id
 ![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
 
 ### Changelog
+
+#### v0.0.4
+- Fixed tool descriptor for timeseries tool.
 
 #### v0.0.3
 - Added site info tool for detailed information on site.

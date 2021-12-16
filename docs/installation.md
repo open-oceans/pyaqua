@@ -31,11 +31,12 @@ usage: pyaqua [-h] {site-list,site-live,site-daily,site-timeseries} ...
 Simple CLI for Aqualink API
 
 positional arguments:
-  {site-list,site-live,site-daily,site-timeseries}
+  {site-list,site-info,site-live,site-daily,site-timeseries}
     site-list           Print lists of Site Name and ID with spotters
+    site-info           Print detailed information for a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
-    site-timeseries     Print daily data info for a site
+    site-timeseries     Exports timeseries data for a site
 
 optional arguments:
   -h, --help            show this help message and exit

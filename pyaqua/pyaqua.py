@@ -335,7 +335,7 @@ def main(args=None):
     parser_sitedaily.set_defaults(func=sitedaily_from_parser)
 
     parser_timeseries = subparsers.add_parser(
-        "site-timeseries", help="Print daily data info for a site"
+        "site-timeseries", help="Exports timeseries data for a site"
     )
     required_named = parser_timeseries.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
