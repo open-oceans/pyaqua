@@ -241,6 +241,11 @@ def site_timeseries(delta, sid, dtype, fpath):
     past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"Time series from {past_utc} to {current_utc}")
 
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    if response.status_code == 200:
+        resp = response.json()['polygon']['coordinates']
+        lng = resp[0]
+        lat = resp[1]
     if dtype is not None:
         if dtype == "temp":
             metrics = "bottom_temperature,top_temperature"
@@ -275,11 +280,17 @@ def site_timeseries(delta, sid, dtype, fpath):
                 print(f"Processing noaa_{metric}_{sid}")
                 fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
                 df = pd.DataFrame(resp["noaa"][metric])
+                if lat and lng is not None:
+                    df['latitude'] = lat
+                    df['longitude'] = lng
                 df.to_csv(fname, index=False)
             if resp["spotter"][metric]:
                 print(f"Processing spotter_{metric}_{sid}")
                 fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
                 df = pd.DataFrame(resp["spotter"][metric])
+                if lat and lng is not None:
+                    df['latitude'] = lat
+                    df['longitude'] = lng
                 df.to_csv(fname, index=False)
     else:
         print(
