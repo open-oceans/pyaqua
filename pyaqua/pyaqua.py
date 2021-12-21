@@ -106,20 +106,29 @@ def pyaqua_version():
 pyaqua_version()
 
 
-def sitelist(sname):
+def sitelist(sname, status):
     sid_list = []
     status_list = []
     response = requests.get("https://ocean-systems.uc.r.appspot.com/api/sites")
+    stat_type = ["maintenance", "deployed", "shipped", "lost"]
+    if status is not None and status not in stat_type:
+        sys.exit(
+            "Status type not supported choose from: maintenance|deployed|shipped|lost"
+        )
     for items in response.json():
         if items["sensorId"] is not None:
-            sid_list.append({items["name"]: items["id"]})
-            status_list.append(items["status"])
+            if status is not None and items["status"] == status:
+                sid_list.append({items["name"]: items["id"]})
+                status_list.append(items["status"])
+            elif status is None:
+                sid_list.append({items["name"]: items["id"]})
+                status_list.append(items["status"])
     for site in sid_list:
         for name, sid in site.items():
             if sname is not None:
                 rat = fuzz.ratio(sname.lower(), name.lower())
-            if sname is not None and rat > 75:
-                print(f"{name}: {sid}")
+                if sname.lower() in name.lower() or rat > 75:
+                    print(f"{name}: {sid}")
             elif sname is None:
                 print(f"{name}: {sid}")
     print("\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
@@ -128,7 +137,7 @@ def sitelist(sname):
 
 
 def sitelist_from_parser(args):
-    sitelist(sname=args.name)
+    sitelist(sname=args.name, status=args.status)
 
 
 # Get a quick check on a site
@@ -243,7 +252,7 @@ def site_timeseries(delta, sid, dtype, fpath):
 
     response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
-        resp = response.json()['polygon']['coordinates']
+        resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
         lat = resp[1]
     if dtype is not None:
@@ -281,16 +290,16 @@ def site_timeseries(delta, sid, dtype, fpath):
                 fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
                 df = pd.DataFrame(resp["noaa"][metric])
                 if lat and lng is not None:
-                    df['latitude'] = lat
-                    df['longitude'] = lng
+                    df["latitude"] = lat
+                    df["longitude"] = lng
                 df.to_csv(fname, index=False)
             if resp["spotter"][metric]:
                 print(f"Processing spotter_{metric}_{sid}")
                 fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
                 df = pd.DataFrame(resp["spotter"][metric])
                 if lat and lng is not None:
-                    df['latitude'] = lat
-                    df['longitude'] = lng
+                    df["latitude"] = lat
+                    df["longitude"] = lng
                 df.to_csv(fname, index=False)
     else:
         print(
@@ -311,6 +320,11 @@ def main(args=None):
     )
     optional_named = parser_sitelist.add_argument_group("Optional named arguments")
     optional_named.add_argument("--name", help="Pass site name", default=None)
+    optional_named.add_argument(
+        "--status",
+        help="Site status from maintenance|deployed|shipped|lost",
+        default=None,
+    )
     parser_sitelist.set_defaults(func=sitelist_from_parser)
 
     parser_siteinfo = subparsers.add_parser(

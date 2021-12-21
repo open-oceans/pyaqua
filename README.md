@@ -79,9 +79,9 @@ To obtain help for specific functionality, simply call it with _help_ switch, e.
 The tool is designed to interact with the Aqualink.org API, for now this is focused only on the spotter endpoints.
 
 ### site list
-This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id.
+This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
 
-![site_list](https://user-images.githubusercontent.com/6677629/145728096-dd15a9a1-e8c7-43ca-9884-0a6e7842b689.gif)
+![site-list](https://user-images.githubusercontent.com/6677629/146982428-a0263324-c6fb-4418-b20e-3b121986a8a4.gif)
 
 ### site info
 The site info tool uses the site ID to get detailed information about the setup, location, time zone, status information to name a few. Historical means are dropped along with admin data for ease of parsing and since they do not add a large amount of value for general purpose users directly. The user does have the option to get to the complete admin or historical data if needed
@@ -104,6 +104,10 @@ This allows to get the most daily data for a site based on a site ID from the id
 ![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
 
 ### Changelog
+
+#### v0.0.5
+- added status filter to site-list tool
+- added lat long for site-timeseries export
 
 #### v0.0.4
 - Fixed tool descriptor for timeseries tool.
