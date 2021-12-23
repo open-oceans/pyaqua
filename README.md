@@ -27,6 +27,7 @@ Readme Docs [available online](https://samapriya.github.io/pyaqua)
 * [Getting started](#getting-started)
 * [pyaqua Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api)
     * [site list](#site-list)
+    * [site-alert](#site-alert)
     * [site info](#site-info)
     * [site live](#site-live)
     * [site-daily](#site-daily)
@@ -64,8 +65,9 @@ usage: pyaqua [-h] {site-list,site-info,site-live,site-daily,site-timeseries} ..
 Simple CLI for Aqualink API
 
 positional arguments:
-  {site-list,site-info,site-live,site-daily,site-timeseries}
+  {site-list,site-alert,site-info,site-live,site-daily,site-timeseries}
     site-list           Print lists of Site Name and ID with spotters
+    site-alert          Print site alerts for sites with spotters
     site-info           Print detailed information for a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
@@ -84,6 +86,12 @@ The tool is designed to interact with the Aqualink.org API, for now this is focu
 This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
 
 ![site-list](https://user-images.githubusercontent.com/6677629/146982428-a0263324-c6fb-4418-b20e-3b121986a8a4.gif)
+
+### site alert
+The site alert tool parses data from the [heat stress collection page of aqualink](https://aqualink.org/collections/heat-stress). Since the tool is focused on spotter only sites it only picks those sites that have active alerts and have spotters.
+
+![site-alert](https://user-images.githubusercontent.com/6677629/147210423-1048b0d3-d53e-4338-822c-e27df865a343.gif)
+
 
 ### site info
 The site info tool uses the site ID to get detailed information about the setup, location, time zone, status information to name a few. Historical means are dropped along with admin data for ease of parsing and since they do not add a large amount of value for general purpose users directly. The user does have the option to get to the complete admin or historical data if needed
@@ -106,6 +114,9 @@ This allows to get the most daily data for a site based on a site ID from the id
 ![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
 
 ### Changelog
+
+#### v0.0.6
+- added site alert tool
 
 #### v0.0.5
 - added status filter to site-list tool

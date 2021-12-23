@@ -6,7 +6,7 @@ def readme():
         return f.read()
 setuptools.setup(
     name='pyaqua',
-    version='0.0.5',
+    version='0.0.6',
     packages=find_packages(),
     url='https://github.com/samapriya/pyaqua',
     install_requires=['requests>=2.23.1','beautifulsoup4>=4.9.3','pandas>=1.3.3','python_dateutil>=2.8.2','rapidfuzz>=1.9.0'],

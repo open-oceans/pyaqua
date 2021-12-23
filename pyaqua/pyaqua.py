@@ -132,12 +132,55 @@ def sitelist(sname, status):
             elif sname is None:
                 print(f"{name}: {sid}")
     print("\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
-    print("Spoter status distribution :")
+    print("Spotter status distribution :")
     print(json.dumps(Counter(status_list)))
 
 
 def sitelist_from_parser(args):
     sitelist(sname=args.name, status=args.status)
+
+
+# Site alert
+def sitealert(level):
+    sid_list = []
+    status_list = []
+    if level is None:
+        level = 1  # only pick sites with alert
+    response = requests.get(
+        "https://ocean-systems.uc.r.appspot.com/api/collections/heat-stress-tracker",
+        headers=headers,
+    )
+    if response.status_code == 200:
+        for alert_sites in response.json()["sites"]:
+            if alert_sites["sensorId"] is not None:
+                if alert_sites["collectionData"]["alert"] == 0:
+                    alert_level = "no alert"
+                elif alert_sites["collectionData"]["alert"] == 1:
+                    alert_level = "watch"
+                elif alert_sites["collectionData"]["alert"] == 2:
+                    alert_level = "warning"
+                elif alert_sites["collectionData"]["alert"] == 3:
+                    alert_level = "Level-1"
+                elif alert_sites["collectionData"]["alert"] == 4:
+                    alert_level = "Level-2"
+                if alert_sites["collectionData"]["alert"] >= level:
+                    sid_list.append({alert_sites["name"]: alert_sites["id"]})
+                    status_list.append(alert_level)
+    for site in sid_list:
+        for name, sid in site.items():
+            print(f"{name}: {sid}")
+    print(
+        "\n"
+        + f"Found a total of {len(sid_list)} sites with spotters & active alert level >= {level}"
+        + "\n"
+    )
+    print("Level Key ===> 0: No alert, 1: watch, 2: warning, 3:Level-1, 4:Level-2")
+    print("\n" + "Alert level distribution :")
+    print(json.dumps(Counter(status_list)))
+
+
+def sitealert_from_parser(args):
+    sitealert(level=args.level)
 
 
 # Get a quick check on a site
@@ -326,6 +369,19 @@ def main(args=None):
         default=None,
     )
     parser_sitelist.set_defaults(func=sitelist_from_parser)
+
+    parser_sitealert = subparsers.add_parser(
+        "site-alert", help="Print site alerts for sites with spotters"
+    )
+    optional_named = parser_sitealert.add_argument_group("Optional named arguments")
+    optional_named.add_argument(
+        "--level",
+        help="Level 0-4 no-alert|watch|warning|Level-1|Level-2",
+        default=None,
+        type=int,
+        choices=range(0, 5),
+    )
+    parser_sitealert.set_defaults(func=sitealert_from_parser)
 
     parser_siteinfo = subparsers.add_parser(
         "site-info", help="Print detailed information for a site"

@@ -1,5 +1,8 @@
 # Changelog
 
+#### v0.0.6
+- added site alert tool
+
 #### v0.0.5
 - added status filter to site-list tool
 - added lat long for site-timeseries export
