@@ -1,5 +1,8 @@
 # Changelog
 
+#### v0.0.7
+- added readme tool to CLI for browser redirect
+
 #### v0.0.6
 - added site alert tool
 

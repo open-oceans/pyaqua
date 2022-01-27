@@ -115,6 +115,9 @@ This allows to get the most daily data for a site based on a site ID from the id
 
 ### Changelog
 
+#### v0.0.7
+- added readme tool to CLI for browser redirect
+
 #### v0.0.6
 - added site alert tool
 

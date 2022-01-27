@@ -21,6 +21,7 @@ import pkg_resources
 import argparse
 import os
 import datetime
+import webbrowser
 import pandas as pd
 from rapidfuzz import fuzz
 from collections import Counter
@@ -104,6 +105,21 @@ def pyaqua_version():
 
 
 pyaqua_version()
+
+
+# Go to the readMe
+def readme():
+    try:
+        a = webbrowser.open("https://samapriya.github.io/pyaqua/", new=2)
+        if a == False:
+            print("Your setup does not have a monitor to display the webpage")
+            print(" Go to {}".format("https://samapriya.github.io/pyaqua/"))
+    except Exception as e:
+        print(e)
+
+
+def read_from_parser(args):
+    readme()
 
 
 def sitelist(sname, status):
@@ -357,6 +373,11 @@ def timeseries_from_parser(args):
 def main(args=None):
     parser = argparse.ArgumentParser(description="Simple CLI for Aqualink API")
     subparsers = parser.add_subparsers()
+
+    parser_read = subparsers.add_parser(
+        "readme", help="Go to the web based pyaqua readme page"
+    )
+    parser_read.set_defaults(func=read_from_parser)
 
     parser_sitelist = subparsers.add_parser(
         "site-list", help="Print lists of Site Name and ID with spotters"
