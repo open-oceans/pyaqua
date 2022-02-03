@@ -22,11 +22,13 @@ import argparse
 import os
 import datetime
 import webbrowser
+from argofloats import argofloats
 import pandas as pd
 from rapidfuzz import fuzz
 from collections import Counter
 from bs4 import BeautifulSoup
 from dateutil.relativedelta import *
+
 
 headers = {
     "authority": "ocean-systems.uc.r.appspot.com",
@@ -370,6 +372,42 @@ def timeseries_from_parser(args):
     site_timeseries(sid=args.sid, delta=args.months, dtype=args.dtype, fpath=args.fpath)
 
 
+# Function to export time series data from site
+def site_argofloats(sid, fpath, start, end, radius):
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    if response.status_code == 200:
+        resp = response.json()["polygon"]["coordinates"]
+        lng = resp[0]
+        lat = resp[1]
+    else:
+        sys.exit(
+            f"Failed to fetch {sid} coordinates with error: {response.status_code}"
+        )
+    try:
+        argofloats.argoexp(
+            fpath=fpath,
+            lat=lat,
+            lng=lng,
+            start=start,
+            end=end,
+            radius=radius,
+            geometry=None,
+            plid=None,
+        )
+    except Exception as e:
+        print(e)
+
+
+def argo_from_parser(args):
+    site_argofloats(
+        sid=args.sid,
+        start=args.start,
+        end=args.end,
+        fpath=args.fpath,
+        radius=args.radius,
+    )
+
+
 def main(args=None):
     parser = argparse.ArgumentParser(description="Simple CLI for Aqualink API")
     subparsers = parser.add_subparsers()
@@ -451,7 +489,26 @@ def main(args=None):
         help="Data type: wind/wave/temp/sat_temp/alert/anomaly/dhw",
         default=None,
     )
+
     parser_timeseries.set_defaults(func=timeseries_from_parser)
+
+    parser_argo = subparsers.add_parser(
+        "site-argo", help="Exports coincident argofloat data for a site"
+    )
+    required_named = parser_argo.add_argument_group("Required named arguments.")
+    required_named.add_argument("--sid", help="Site ID", required=True)
+    required_named.add_argument(
+        "--start", help="Start date in format YYYY-MM-DD", required=True
+    )
+    required_named.add_argument(
+        "--end", help="End date in format YYYY-MM-DD", required=True
+    )
+    required_named.add_argument("--fpath", help="Folder path for export", required=True)
+    optional_named = parser_argo.add_argument_group("Optional named arguments")
+    optional_named.add_argument(
+        "--radius", help="Search radius in kilometers", default=None
+    )
+    parser_argo.set_defaults(func=argo_from_parser)
 
     args = parser.parse_args()
 

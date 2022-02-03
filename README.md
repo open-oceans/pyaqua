@@ -32,6 +32,7 @@ Readme Docs [available online](https://samapriya.github.io/pyaqua)
     * [site live](#site-live)
     * [site-daily](#site-daily)
     * [site-timeseries](#site-timeseries)
+    * [site-argo](#site-argo)
 
 ## Installation
 This assumes that you have native python & pip installed in your system, you can test this by going to the terminal (or windows command prompt) and trying
@@ -65,13 +66,15 @@ usage: pyaqua [-h] {site-list,site-info,site-live,site-daily,site-timeseries} ..
 Simple CLI for Aqualink API
 
 positional arguments:
-  {site-list,site-alert,site-info,site-live,site-daily,site-timeseries}
+  {readme,site-list,site-alert,site-info,site-live,site-daily,site-timeseries,site-argo}
+    readme              Go to the web based pyaqua readme page
     site-list           Print lists of Site Name and ID with spotters
     site-alert          Print site alerts for sites with spotters
     site-info           Print detailed information for a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
     site-timeseries     Exports timeseries data for a site
+    site-argo           Exports coincident argofloat data for a site
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -113,7 +116,16 @@ This allows to get the most daily data for a site based on a site ID from the id
 
 ![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
 
+### site argo
+This tool uses the argofloats CLI to get coincident argofloats data per site. It uses the start and end date specified and a search radius around the site latitude and longitude. Default search radius is a 1000 kilometers and the exports are in a CSV format with format **argofloats_profileID**
+
+![pyaqua_site-argo](https://user-images.githubusercontent.com/6677629/152304351-0375871b-e80e-46f5-a74b-56c76f094c9a.gif)
+
+
 ### Changelog
+
+#### v0.0.8
+- added site-argo tool for argofloat exports for sites
 
 #### v0.0.7
 - added readme tool to CLI for browser redirect

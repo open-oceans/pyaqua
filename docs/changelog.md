@@ -1,5 +1,9 @@
 # Changelog
 
+
+#### v0.0.8
+- added site-argo tool for argofloat exports for sites
+
 #### v0.0.7
 - added readme tool to CLI for browser redirect
 
