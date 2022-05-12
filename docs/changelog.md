@@ -1,5 +1,10 @@
 # Changelog
 
+#### v0.0.9
+- now includes support for hobo sensors
+- added site list filter for device type breakdown
+- modified site alert tool to pull from all sites and by device type
+- general improvements
 
 #### v0.0.8
 - added site-argo tool for argofloat exports for sites

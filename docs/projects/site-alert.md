@@ -1,8 +1,8 @@
 # Site alert for sites
 
-The site alert tool parses data from the [heat stress collection page of aqualink](https://aqualink.org/collections/heat-stress). Since the tool is focused on spotter only sites it only picks those sites that have active alerts and have spotters.
+The site alert tool parses data from each device type or all sites keeping in consideration the temperature alert level data.
 
-![site-alert](https://user-images.githubusercontent.com/6677629/147210423-1048b0d3-d53e-4338-822c-e27df865a343.gif)
+![site_alert](https://user-images.githubusercontent.com/6677629/168003775-d9369380-791e-4462-b1c9-fc7211c77d2a.gif)
 
 ```
 pyaqua site-alert -h

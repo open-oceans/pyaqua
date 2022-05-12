@@ -1,8 +1,9 @@
 # Site list and ID
 
-This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
+This allows you to get existing sites with spotters or hobo sensors and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
 
-![site-list](https://user-images.githubusercontent.com/6677629/146982428-a0263324-c6fb-4418-b20e-3b121986a8a4.gif)
+![site_list](https://user-images.githubusercontent.com/6677629/168004255-968e5320-c53d-460c-b230-3a6dc75dfa6e.gif)
+
 
 ```
 pyaqua site-list -h

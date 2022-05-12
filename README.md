@@ -83,17 +83,18 @@ optional arguments:
 To obtain help for specific functionality, simply call it with _help_ switch, e.g.: `pyaqua site-live -h`. If you didn't install pyaqua, then you can run it just by going to *pyaqua* directory and running `python pyaqua.py [arguments go here]`
 
 ## pyaqua Simple CLI for [Aqualink API](aqualink.org)
-The tool is designed to interact with the Aqualink.org API, for now this is focused only on the spotter endpoints.
+The tool is designed to interact with the Aqualink.org API, for now this is focused only on the all device endpoints (spotter & hobo sensors) including satellite only sites.
 
 ### site list
-This allows you to get existing sites with spotters attached and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
+This allows you to get existing sites with spotters or hobo sensors and print Site Name and ID. These could be in different status of application including maintenance, deployed, lost, shipped and so on. The tool also applies a fuzzy search and allows you to look for a specific site to get site id. You can now filter using status as well so status types like maintenance, deployed, shipped or lost
 
-![site-list](https://user-images.githubusercontent.com/6677629/146982428-a0263324-c6fb-4418-b20e-3b121986a8a4.gif)
+![site_list](https://user-images.githubusercontent.com/6677629/168004255-968e5320-c53d-460c-b230-3a6dc75dfa6e.gif)
+
 
 ### site alert
-The site alert tool parses data from the [heat stress collection page of aqualink](https://aqualink.org/collections/heat-stress). Since the tool is focused on spotter only sites it only picks those sites that have active alerts and have spotters.
+The site alert tool parses data from each device type or all sites keeping in consideration the temperature alert level data.
 
-![site-alert](https://user-images.githubusercontent.com/6677629/147210423-1048b0d3-d53e-4338-822c-e27df865a343.gif)
+![site_alert](https://user-images.githubusercontent.com/6677629/168003775-d9369380-791e-4462-b1c9-fc7211c77d2a.gif)
 
 
 ### site info
@@ -123,6 +124,12 @@ This tool uses the argofloats CLI to get coincident argofloats data per site. It
 
 
 ### Changelog
+
+#### v0.0.9
+- now includes support for hobo sensors
+- added site list filter for device type breakdown
+- modified site alert tool to pull from all sites and by device type
+- general improvements
 
 #### v0.0.8
 - added site-argo tool for argofloat exports for sites
