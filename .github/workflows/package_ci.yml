@@ -26,6 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -U pip setuptools
         pip install wheel
+        conda install shapely
       if: matrix.os == 'windows-latest'
     - name: Test package
       run: |
