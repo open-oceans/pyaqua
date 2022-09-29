@@ -24,7 +24,7 @@ setuptools.setup(
         "tenacity >= 8.0.1",
         'pyproj>=1.9.5.1;platform_system!="Windows"',
         'geopandas>=0.5.0;platform_system!="Windows"',
-        'shapely>=1.6.4;platform_system!="Windows"',
+        'shapely<2.0.0;platform_system!="Windows"',
         'fiona>=1.8.6;platform_system!="Windows"',
     ],
     license="Apache 2.0",
