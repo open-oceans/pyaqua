@@ -28,6 +28,11 @@ jobs:
         pip install wheel
         conda install shapely
       if: matrix.os == 'windows-latest'
+    - name: Install Dependencies (Mac)
+      continue-on-error: true
+      run:
+        brew install gdal
+      if: matrix.os == 'macos-latest'
     - name: Test package
       run: |
         pip install -r requirements.txt
