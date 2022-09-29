@@ -9,11 +9,11 @@ def readme():
 
 setuptools.setup(
     name='pyaqua',
-    version='0.0.9',
+    version='0.1.0',
     packages=find_packages(),
     url='https://github.com/samapriya/pyaqua',
     install_requires=['requests>=2.23.1', 'beautifulsoup4>=4.9.3', 'pandas>=1.3.3',
-                      'python_dateutil>=2.8.2', 'rapidfuzz>=1.9.0', 'argofloats>=0.0.6'],
+                      'python_dateutil>=2.8.2', 'rapidfuzz>=1.9.0', 'geojson >= 2.5.0', 'area >= 1.1.1', 'natsort >= 8.1.0', 'tenacity >= 8.0.1'],
     license='Apache 2.0',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

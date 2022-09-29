@@ -25,10 +25,12 @@ from collections import Counter
 import pandas as pd
 import pkg_resources
 import requests
-from argofloats import argofloats
 from bs4 import BeautifulSoup
 from dateutil.relativedelta import *
+from natsort import natsorted
 from rapidfuzz import fuzz
+
+from .argofloats import argoexp
 
 headers = {
     "authority": "ocean-systems.uc.r.appspot.com",
@@ -153,17 +155,13 @@ def sitelist(sname, status):
         if sid_list:
             print("\n" + "================Spotter Locations================")
             print(
-                "\n".join([" : ".join([str(cell) for cell in row])
-                          for row in sid_list])
+                "\n".join([" : ".join([str(cell) for cell in row]) for row in sid_list])
             )
     if hobo_list and sname is None:
         print("\n" + "================Hobo Sensor Locations================")
-        print("\n".join([" : ".join([str(cell) for cell in row])
-              for row in hobo_list]))
-    print(
-        "\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
-    print(
-        "\n" + f"Found a total of {len(hobo_list)} sites with hobo logger" + "\n")
+        print("\n".join([" : ".join([str(cell) for cell in row]) for row in hobo_list]))
+    print("\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
+    print("\n" + f"Found a total of {len(hobo_list)} sites with hobo logger" + "\n")
     print("Spotter status distribution :")
     print(json.dumps(Counter(status_list)))
 
@@ -254,8 +252,7 @@ def sitealert(level, device):
             "\n"
             + f"================Spotter Alert Locations & Level >={level}================"
         )
-        print("\n".join([" : ".join([str(cell) for cell in row])
-              for row in sid_list]))
+        print("\n".join([" : ".join([str(cell) for cell in row]) for row in sid_list]))
         print(
             "\n"
             + f"Found a total of {len(sid_list)} sites with spotters & active alert level >= {level}"
@@ -265,8 +262,7 @@ def sitealert(level, device):
         print(
             "\n" + f"================Hobo Sensor Locations & Level >=1================"
         )
-        print("\n".join([" : ".join([str(cell) for cell in row])
-              for row in hobo_list]))
+        print("\n".join([" : ".join([str(cell) for cell in row]) for row in hobo_list]))
         print(
             "\n"
             + f"Found a total of {len(hobo_list)} hobo sensor list sites with active alert level >= {level}"
@@ -278,8 +274,7 @@ def sitealert(level, device):
             + f"================Overall sites Locations & Level >={level}================"
         )
         print(
-            "\n".join([" : ".join([str(cell) for cell in row])
-                      for row in overall_list])
+            "\n".join([" : ".join([str(cell) for cell in row]) for row in overall_list])
         )
         print("\n")
 
@@ -294,11 +289,9 @@ def sitealert_from_parser(args):
 
 # Get a quick check on a site
 def site_info(sid, ext):
-    response = requests.get(
-        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
-        keys_to_remove = ["admins", "historicalMonthlyMean",
-                          "stream", "videoStream"]
+        keys_to_remove = ["admins", "historicalMonthlyMean", "stream", "videoStream"]
         site_inf = response.json()
         if ext is not None and ext == "historical":
             ext = "historicalMonthlyMean"
@@ -332,8 +325,7 @@ def site_live(sid):
         print(json.dumps(live_data.json(), indent=4))
     else:
         print(
-            "Failed to get live data with error code {}".format(
-                live_data.status_code)
+            "Failed to get live data with error code {}".format(live_data.status_code)
         )
 
 
@@ -342,13 +334,24 @@ def sitelive_from_parser(args):
 
 
 # Get daily data for a site
-def site_daily(delta, sid, dtype):
-    d = datetime.datetime.utcnow()
-    current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
-    if delta is None:
-        delta = 3
-    past_utc = d + relativedelta(months=-delta)
-    past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+def site_daily(delta, sid, dtype, fpath, start, end):
+    if start and end is not None:
+        start = datetime.datetime.strptime(start, "%Y-%m-%d")
+        end = datetime.datetime.strptime(end, "%Y-%m-%d")
+        past_utc = start.strftime("%Y-%m-%dT%H:%M:%SZ")
+        current_utc = end.strftime("%Y-%m-%dT%H:%M:%SZ")
+    else:
+        d = datetime.datetime.utcnow()
+        current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
+        if delta is None:
+            delta = 3
+        past_utc = d + relativedelta(months=-int(delta))
+        past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    if response.status_code == 200:
+        resp = response.json()["polygon"]["coordinates"]
+        lng = resp[0]
+        lat = resp[1]
     print(f"Daily data from {past_utc} to {current_utc} for site {sid}")
     params = {
         "start": past_utc,
@@ -370,6 +373,7 @@ def site_daily(delta, sid, dtype):
         params=params,
     )
     if response.status_code == 200:
+        overall = []
         for resp in response.json():
             if dset is not None:
                 ext = {
@@ -379,13 +383,26 @@ def site_daily(delta, sid, dtype):
                     or dset.capitalize() in key
                     or dset.upper() in key
                 }
-                ext_dt = {key: value for key,
-                          value in resp.items() if key == "date"}
+                ext_dt = {key: value for key, value in resp.items() if key == "date"}
                 combined = ext_dt.copy()
                 combined.update(ext)
-                print(json.dumps(combined, indent=2))
+                overall.append(combined)
             else:
-                print(json.dumps(resp, indent=2))
+                overall.append(resp)
+        if fpath is not None:
+            if dtype is None:
+                dtype = "overall"
+            fname = os.path.join(fpath, f"spotter_{dtype}_{sid}.csv")
+            df = pd.DataFrame(overall)
+            print(f"Exporting daily data to {fname}")
+            if lat and lng is not None:
+                df["latitude"] = lat
+                df["longitude"] = lng
+            df.dropna(axis=1, how="all", inplace=True)
+            df = df.loc[:, (df != 0).any(axis=0)]
+            df.to_csv(fname, index=False)
+        else:
+            print(json.dumps(overall, indent=2))
     else:
         print(
             f"Daily date fetch failed with error: {response.status_code} & {response.text}"
@@ -393,21 +410,33 @@ def site_daily(delta, sid, dtype):
 
 
 def sitedaily_from_parser(args):
-    site_daily(sid=args.sid, delta=args.months, dtype=args.dtype)
+    site_daily(
+        sid=args.sid,
+        delta=args.months,
+        dtype=args.dtype,
+        fpath=args.fpath,
+        start=args.start,
+        end=args.end,
+    )
 
 
 # Function to export time series data from site
 def site_timeseries(delta, sid, dtype, fpath):
-    d = datetime.datetime.utcnow()
-    current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
-    if delta is None:
-        delta = 3
-    past_utc = d + relativedelta(months=-int(delta))
-    past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if start and end is not None:
+        start = datetime.datetime.strptime(start, "%Y-%m-%d")
+        end = datetime.datetime.strptime(end, "%Y-%m-%d")
+        past_utc = start.strftime("%Y-%m-%dT%H:%M:%SZ")
+        current_utc = end.strftime("%Y-%m-%dT%H:%M:%SZ")
+    else:
+        d = datetime.datetime.utcnow()
+        current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
+        if delta is None:
+            delta = 3
+        past_utc = d + relativedelta(months=-int(delta))
+        past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"Time series from {past_utc} to {current_utc}")
 
-    response = requests.get(
-        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
         resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
@@ -432,33 +461,38 @@ def site_timeseries(delta, sid, dtype, fpath):
     else:
         print("Datatype is not supported")
 
-    params = {"start": past_utc, "end": current_utc,
-              "metrics": metrics, "hourly": True}
+    params = {
+        "start": past_utc,
+        "end": current_utc,
+        "metrics": metrics,
+        "hourly": "true",
+    }
 
     response = requests.get(
         f"https://ocean-systems.uc.r.appspot.com/api/time-series/sites/{sid}",
         headers=headers,
-        params=params,
+        params=json.dumps(params),
     )
+    metric_list = []
     if response.status_code == 200:
         resp = response.json()
-        for metric in metrics.split(","):
-            if resp["noaa"][metric]:
-                print(f"Processing noaa_{metric}_{sid}")
-                fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
-                df = pd.DataFrame(resp["noaa"][metric])
-                if lat and lng is not None:
-                    df["latitude"] = lat
-                    df["longitude"] = lng
-                df.to_csv(fname, index=False)
-            if resp["spotter"][metric]:
-                print(f"Processing spotter_{metric}_{sid}")
-                fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
-                df = pd.DataFrame(resp["spotter"][metric])
-                if lat and lng is not None:
-                    df["latitude"] = lat
-                    df["longitude"] = lng
-                df.to_csv(fname, index=False)
+        for metric in resp:
+            metric_list.append(metric)
+        if dtype is not None and dtype in metric_list:
+            metric_list = [dtype]
+        for metric in natsorted(metric_list):
+            print(f"Processing spotter_{metric}_{sid}")
+            fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
+            try:
+                df = pd.DataFrame(resp[metric]["spotter"]["data"])
+            except Exception as error:
+                df = pd.DataFrame(resp[metric]["noaa"]["data"])
+            if lat and lng is not None:
+                df["latitude"] = lat
+                df["longitude"] = lng
+            df.dropna(axis=1, how="all", inplace=True)
+            df = df.loc[:, (df != 0).any(axis=0)]
+            df.to_csv(fname, index=False)
     else:
         print(
             f"Time series failed with error: {response.status_code} & {response.text}"
@@ -466,14 +500,19 @@ def site_timeseries(delta, sid, dtype, fpath):
 
 
 def timeseries_from_parser(args):
-    site_timeseries(sid=args.sid, delta=args.months,
-                    dtype=args.dtype, fpath=args.fpath)
+    site_timeseries(
+        sid=args.sid,
+        delta=args.months,
+        dtype=args.dtype,
+        fpath=args.fpath,
+        start=args.start,
+        end=args.end,
+    )
 
 
 # Function to export time series data from site
 def site_argofloats(sid, fpath, start, end, radius):
-    response = requests.get(
-        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
         resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
@@ -483,7 +522,7 @@ def site_argofloats(sid, fpath, start, end, radius):
             f"Failed to fetch {sid} coordinates with error: {response.status_code}"
         )
     try:
-        argofloats.argoexp(
+        argoexp(
             fpath=fpath,
             lat=lat,
             lng=lng,
@@ -519,8 +558,7 @@ def main(args=None):
     parser_sitelist = subparsers.add_parser(
         "site-list", help="Print lists of Site Name and ID with spotters"
     )
-    optional_named = parser_sitelist.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_sitelist.add_argument_group("Optional named arguments")
     optional_named.add_argument("--name", help="Pass site name", default=None)
     optional_named.add_argument(
         "--status",
@@ -532,8 +570,7 @@ def main(args=None):
     parser_sitealert = subparsers.add_parser(
         "site-alert", help="Print site alerts for sites with spotters"
     )
-    optional_named = parser_sitealert.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_sitealert.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--level",
         help="Level 0-4 no-alert|watch|warning|Level-1|Level-2",
@@ -551,11 +588,9 @@ def main(args=None):
     parser_siteinfo = subparsers.add_parser(
         "site-info", help="Print detailed information for a site"
     )
-    required_named = parser_siteinfo.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_siteinfo.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_siteinfo.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_siteinfo.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--extra", help="extra info keywords: historical/admins", default=None
     )
@@ -564,39 +599,52 @@ def main(args=None):
     parser_sitelive = subparsers.add_parser(
         "site-live", help="Get most recent/live info from a site"
     )
-    required_named = parser_sitelive.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_sitelive.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     parser_sitelive.set_defaults(func=sitelive_from_parser)
 
     parser_sitedaily = subparsers.add_parser(
         "site-daily", help="Print daily data info for a site"
     )
-    required_named = parser_sitedaily.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_sitedaily.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_sitedaily.add_argument_group(
-        "Optional named arguments")
+    optional_named = parser_sitedaily.add_argument_group("Optional named arguments")
     optional_named.add_argument(
-        "--months", help="Total number of months from today", default=None
+        "--months",
+        help="Total number of months in the past from today (default=1)",
+        default=None,
+    )
+    optional_named.add_argument(
+        "--start", help="Start date for daily data in format YYYY-MM-DD", default=None
+    )
+    optional_named.add_argument(
+        "--end", help="End date for daily data in format YYYY-MM-DD", default=None
     )
     optional_named.add_argument(
         "--dtype", help="Data type: wind/wave/temp", default=None
+    )
+    optional_named.add_argument(
+        "--fpath", help="Full path to folder to export daily data as CSV", default=None
     )
     parser_sitedaily.set_defaults(func=sitedaily_from_parser)
 
     parser_timeseries = subparsers.add_parser(
         "site-timeseries", help="Exports timeseries data for a site"
     )
-    required_named = parser_timeseries.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_timeseries.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    required_named.add_argument(
-        "--fpath", help="Folder path for export", required=True)
-    optional_named = parser_timeseries.add_argument_group(
-        "Optional named arguments")
+    required_named.add_argument("--fpath", help="Folder path for export", required=True)
+    optional_named = parser_timeseries.add_argument_group("Optional named arguments")
     optional_named.add_argument(
-        "--months", help="Total number of months from today", default=None
+        "--months",
+        help="Total number of months in the past from today (default=3)",
+        default=None,
+    )
+    optional_named.add_argument(
+        "--start", help="Start date for daily data in format YYYY-MM-DD", default=None
+    )
+    optional_named.add_argument(
+        "--end", help="End date for daily data in format YYYY-MM-DD", default=None
     )
     optional_named.add_argument(
         "--dtype",
@@ -609,8 +657,7 @@ def main(args=None):
     parser_argo = subparsers.add_parser(
         "site-argo", help="Exports coincident argofloat data for a site"
     )
-    required_named = parser_argo.add_argument_group(
-        "Required named arguments.")
+    required_named = parser_argo.add_argument_group("Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     required_named.add_argument(
         "--start", help="Start date in format YYYY-MM-DD", required=True
@@ -618,8 +665,7 @@ def main(args=None):
     required_named.add_argument(
         "--end", help="End date in format YYYY-MM-DD", required=True
     )
-    required_named.add_argument(
-        "--fpath", help="Folder path for export", required=True)
+    required_named.add_argument("--fpath", help="Folder path for export", required=True)
     optional_named = parser_argo.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--radius", help="Search radius in kilometers", default=None
