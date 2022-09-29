@@ -1,5 +1,11 @@
 # Changelog
 
+#### v0.1.0
+- Fixed issue with Boolean value for payload
+- Fixed metadata parsing and improved logic for time series export
+- Both time series and daily data now support export
+- Both time series and daily data now supports custom date ranges
+
 #### v0.0.9
 - now includes support for hobo sensors
 - added site list filter for device type breakdown

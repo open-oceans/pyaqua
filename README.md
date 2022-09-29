@@ -23,16 +23,29 @@ https://doi.org/10.5281/zenodo.6562816
 Readme Docs [available online](https://samapriya.github.io/pyaqua)
 
 ## Table of contents
-* [Installation](#installation)
-* [Getting started](#getting-started)
-* [pyaqua Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api)
-    * [site list](#site-list)
-    * [site-alert](#site-alert)
-    * [site info](#site-info)
-    * [site live](#site-live)
-    * [site-daily](#site-daily)
-    * [site-timeseries](#site-timeseries)
-    * [site-argo](#site-argo)
+- [pyaqua: Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api)
+      - [Citation](#citation)
+  - [Table of contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Getting started](#getting-started)
+  - [pyaqua Simple CLI for Aqualink API](#pyaqua-simple-cli-for-aqualink-api-1)
+    - [site list](#site-list)
+    - [site alert](#site-alert)
+    - [site info](#site-info)
+    - [site-live](#site-live)
+    - [site daily](#site-daily)
+    - [site timeseries](#site-timeseries)
+    - [site argo](#site-argo)
+    - [Changelog](#changelog)
+      - [v0.1.0](#v010)
+      - [v0.0.9](#v009)
+      - [v0.0.8](#v008)
+      - [v0.0.7](#v007)
+      - [v0.0.6](#v006)
+      - [v0.0.5](#v005)
+      - [v0.0.4](#v004)
+      - [v0.0.3](#v003)
+      - [v0.0.2](#v002)
 
 ## Installation
 This assumes that you have native python & pip installed in your system, you can test this by going to the terminal (or windows command prompt) and trying
@@ -92,9 +105,9 @@ This allows you to get existing sites with spotters or hobo sensors and print Si
 
 
 ### site alert
-The site alert tool parses data from each device type or all sites keeping in consideration the temperature alert level data.
+The site alert tool parses data from each device type or all sites keeping in consideration the temperature alert level data. You can now filter by device type spotters/hobo loggers.
 
-![site_alert](https://user-images.githubusercontent.com/6677629/168003775-d9369380-791e-4462-b1c9-fc7211c77d2a.gif)
+![site_alert](https://user-images.githubusercontent.com/6677629/192980561-b8d69577-e434-4011-8716-368a21c0824d.gif)
 
 
 ### site info
@@ -108,14 +121,14 @@ This allows to get the most updated/live information about a site based on a sit
 ![site_live](https://user-images.githubusercontent.com/6677629/145728182-db54c3ce-3a4d-4b45-852b-5c1ae5a97376.gif)
 
 ### site daily
-This allows to get the most daily data for a site based on a site ID from the idlist. The tool parses the daily output as an indented JSON and you can specify months since today as well as data type like wind/wave/temp.
+This allows to get the most daily data for a site based on a site ID from the idlist. The tool parses the daily output as an indented JSON and you can specify months since today as well as data type like wind/wave/temp. Now supports CSV export and custom date range since v0.1.0
 
-![site_daily](https://user-images.githubusercontent.com/6677629/145728380-11b0acaf-8a9c-4c90-904a-675f8364a5f6.gif)
+![site_daily](https://user-images.githubusercontent.com/6677629/192980559-e58014a3-26ab-4519-a73e-9a9bdfb5ae69.gif)
 
 ### site timeseries
-This allows to get the most daily data for a site based on a site ID from the idlist. The tool exports the time series data for both NOAA and spotter datasets as CSV to a given folder. It attaches the site_id to the CSV filename **spotter_dhw_siteid** for example **spotter_dhw_1113**
+This allows to get the most daily data for a site based on a site ID from the idlist. The tool exports the time series data for both NOAA and spotter datasets as CSV to a given folder. It attaches the site_id to the CSV filename **spotter_dhw_siteid** for example **spotter_dhw_1113**. You can now pass custom date ranges.
 
-![site_timeseries](https://user-images.githubusercontent.com/6677629/145728547-c724f911-4301-4887-a9e8-dbbce4b28174.gif)
+![site_timeseries](https://user-images.githubusercontent.com/6677629/192980552-56bc916a-6643-4d74-8523-232baaf28bbd.gif)
 
 ### site argo
 This tool uses the argofloats CLI to get coincident argofloats data per site. It uses the start and end date specified and a search radius around the site latitude and longitude. Default search radius is a 1000 kilometers and the exports are in a CSV format with format **argofloats_profileID**
@@ -124,6 +137,12 @@ This tool uses the argofloats CLI to get coincident argofloats data per site. It
 
 
 ### Changelog
+
+#### v0.1.0
+- Fixed issue with Boolean value for payload
+- Fixed metadata parsing and improved logic for time series export
+- Both time series and daily data now support export
+- Both time series and daily data now supports custom date ranges
 
 #### v0.0.9
 - now includes support for hobo sensors

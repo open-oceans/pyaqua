@@ -155,13 +155,17 @@ def sitelist(sname, status):
         if sid_list:
             print("\n" + "================Spotter Locations================")
             print(
-                "\n".join([" : ".join([str(cell) for cell in row]) for row in sid_list])
+                "\n".join([" : ".join([str(cell) for cell in row])
+                          for row in sid_list])
             )
     if hobo_list and sname is None:
         print("\n" + "================Hobo Sensor Locations================")
-        print("\n".join([" : ".join([str(cell) for cell in row]) for row in hobo_list]))
-    print("\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
-    print("\n" + f"Found a total of {len(hobo_list)} sites with hobo logger" + "\n")
+        print("\n".join([" : ".join([str(cell) for cell in row])
+              for row in hobo_list]))
+    print(
+        "\n" + f"Found a total of {len(sid_list)} sites with spotters" + "\n")
+    print(
+        "\n" + f"Found a total of {len(hobo_list)} sites with hobo logger" + "\n")
     print("Spotter status distribution :")
     print(json.dumps(Counter(status_list)))
 
@@ -252,7 +256,8 @@ def sitealert(level, device):
             "\n"
             + f"================Spotter Alert Locations & Level >={level}================"
         )
-        print("\n".join([" : ".join([str(cell) for cell in row]) for row in sid_list]))
+        print("\n".join([" : ".join([str(cell) for cell in row])
+              for row in sid_list]))
         print(
             "\n"
             + f"Found a total of {len(sid_list)} sites with spotters & active alert level >= {level}"
@@ -262,7 +267,8 @@ def sitealert(level, device):
         print(
             "\n" + f"================Hobo Sensor Locations & Level >=1================"
         )
-        print("\n".join([" : ".join([str(cell) for cell in row]) for row in hobo_list]))
+        print("\n".join([" : ".join([str(cell) for cell in row])
+              for row in hobo_list]))
         print(
             "\n"
             + f"Found a total of {len(hobo_list)} hobo sensor list sites with active alert level >= {level}"
@@ -274,7 +280,8 @@ def sitealert(level, device):
             + f"================Overall sites Locations & Level >={level}================"
         )
         print(
-            "\n".join([" : ".join([str(cell) for cell in row]) for row in overall_list])
+            "\n".join([" : ".join([str(cell) for cell in row])
+                      for row in overall_list])
         )
         print("\n")
 
@@ -289,9 +296,11 @@ def sitealert_from_parser(args):
 
 # Get a quick check on a site
 def site_info(sid, ext):
-    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(
+        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
-        keys_to_remove = ["admins", "historicalMonthlyMean", "stream", "videoStream"]
+        keys_to_remove = ["admins", "historicalMonthlyMean",
+                          "stream", "videoStream"]
         site_inf = response.json()
         if ext is not None and ext == "historical":
             ext = "historicalMonthlyMean"
@@ -325,7 +334,8 @@ def site_live(sid):
         print(json.dumps(live_data.json(), indent=4))
     else:
         print(
-            "Failed to get live data with error code {}".format(live_data.status_code)
+            "Failed to get live data with error code {}".format(
+                live_data.status_code)
         )
 
 
@@ -347,7 +357,8 @@ def site_daily(delta, sid, dtype, fpath, start, end):
             delta = 3
         past_utc = d + relativedelta(months=-int(delta))
         past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(
+        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
         resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
@@ -383,7 +394,8 @@ def site_daily(delta, sid, dtype, fpath, start, end):
                     or dset.capitalize() in key
                     or dset.upper() in key
                 }
-                ext_dt = {key: value for key, value in resp.items() if key == "date"}
+                ext_dt = {key: value for key,
+                          value in resp.items() if key == "date"}
                 combined = ext_dt.copy()
                 combined.update(ext)
                 overall.append(combined)
@@ -421,7 +433,7 @@ def sitedaily_from_parser(args):
 
 
 # Function to export time series data from site
-def site_timeseries(delta, sid, dtype, fpath):
+def site_timeseries(delta, sid, dtype, fpath, start, end):
     if start and end is not None:
         start = datetime.datetime.strptime(start, "%Y-%m-%d")
         end = datetime.datetime.strptime(end, "%Y-%m-%d")
@@ -436,7 +448,8 @@ def site_timeseries(delta, sid, dtype, fpath):
         past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"Time series from {past_utc} to {current_utc}")
 
-    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(
+        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
         resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
@@ -512,7 +525,8 @@ def timeseries_from_parser(args):
 
 # Function to export time series data from site
 def site_argofloats(sid, fpath, start, end, radius):
-    response = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
+    response = requests.get(
+        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
     if response.status_code == 200:
         resp = response.json()["polygon"]["coordinates"]
         lng = resp[0]
@@ -558,7 +572,8 @@ def main(args=None):
     parser_sitelist = subparsers.add_parser(
         "site-list", help="Print lists of Site Name and ID with spotters"
     )
-    optional_named = parser_sitelist.add_argument_group("Optional named arguments")
+    optional_named = parser_sitelist.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument("--name", help="Pass site name", default=None)
     optional_named.add_argument(
         "--status",
@@ -570,7 +585,8 @@ def main(args=None):
     parser_sitealert = subparsers.add_parser(
         "site-alert", help="Print site alerts for sites with spotters"
     )
-    optional_named = parser_sitealert.add_argument_group("Optional named arguments")
+    optional_named = parser_sitealert.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument(
         "--level",
         help="Level 0-4 no-alert|watch|warning|Level-1|Level-2",
@@ -588,9 +604,11 @@ def main(args=None):
     parser_siteinfo = subparsers.add_parser(
         "site-info", help="Print detailed information for a site"
     )
-    required_named = parser_siteinfo.add_argument_group("Required named arguments.")
+    required_named = parser_siteinfo.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_siteinfo.add_argument_group("Optional named arguments")
+    optional_named = parser_siteinfo.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument(
         "--extra", help="extra info keywords: historical/admins", default=None
     )
@@ -599,16 +617,19 @@ def main(args=None):
     parser_sitelive = subparsers.add_parser(
         "site-live", help="Get most recent/live info from a site"
     )
-    required_named = parser_sitelive.add_argument_group("Required named arguments.")
+    required_named = parser_sitelive.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     parser_sitelive.set_defaults(func=sitelive_from_parser)
 
     parser_sitedaily = subparsers.add_parser(
         "site-daily", help="Print daily data info for a site"
     )
-    required_named = parser_sitedaily.add_argument_group("Required named arguments.")
+    required_named = parser_sitedaily.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    optional_named = parser_sitedaily.add_argument_group("Optional named arguments")
+    optional_named = parser_sitedaily.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument(
         "--months",
         help="Total number of months in the past from today (default=1)",
@@ -631,10 +652,13 @@ def main(args=None):
     parser_timeseries = subparsers.add_parser(
         "site-timeseries", help="Exports timeseries data for a site"
     )
-    required_named = parser_timeseries.add_argument_group("Required named arguments.")
+    required_named = parser_timeseries.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
-    required_named.add_argument("--fpath", help="Folder path for export", required=True)
-    optional_named = parser_timeseries.add_argument_group("Optional named arguments")
+    required_named.add_argument(
+        "--fpath", help="Folder path for export", required=True)
+    optional_named = parser_timeseries.add_argument_group(
+        "Optional named arguments")
     optional_named.add_argument(
         "--months",
         help="Total number of months in the past from today (default=3)",
@@ -657,7 +681,8 @@ def main(args=None):
     parser_argo = subparsers.add_parser(
         "site-argo", help="Exports coincident argofloat data for a site"
     )
-    required_named = parser_argo.add_argument_group("Required named arguments.")
+    required_named = parser_argo.add_argument_group(
+        "Required named arguments.")
     required_named.add_argument("--sid", help="Site ID", required=True)
     required_named.add_argument(
         "--start", help="Start date in format YYYY-MM-DD", required=True
@@ -665,7 +690,8 @@ def main(args=None):
     required_named.add_argument(
         "--end", help="End date in format YYYY-MM-DD", required=True
     )
-    required_named.add_argument("--fpath", help="Folder path for export", required=True)
+    required_named.add_argument(
+        "--fpath", help="Folder path for export", required=True)
     optional_named = parser_argo.add_argument_group("Optional named arguments")
     optional_named.add_argument(
         "--radius", help="Search radius in kilometers", default=None
