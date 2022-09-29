@@ -6,7 +6,7 @@
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 [![Downloads](https://pepy.tech/badge/pyaqua/month)](https://pepy.tech/project/pyaqua)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5956319.svg)](https://doi.org/10.5281/zenodo.5956319)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7123727.svg)](https://doi.org/10.5281/zenodo.7123727)
 
 Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while.
 
@@ -16,6 +16,6 @@ Aqualink is a philanthropic engineering organization working on building ocean c
 #### Citation
 
 ```
-Samapriya Roy. (2022). samapriya/pyaqua: Simple CLI for Aqualink Org (0.0.8).
-Zenodo. https://doi.org/10.5281/zenodo.5956319
+Samapriya Roy. (2022). samapriya/pyaqua: Simple CLI for Aqualink Org (0.1.0).
+Zenodo. https://doi.org/10.5281/zenodo.7123727
 ```
