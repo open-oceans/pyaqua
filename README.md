@@ -7,6 +7,8 @@
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 [![Downloads](https://pepy.tech/badge/pyaqua/month)](https://pepy.tech/project/pyaqua)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7123727.svg)](https://doi.org/10.5281/zenodo.7123727)
+[![Donate](https://img.shields.io/badge/Donate-Buy%20me%20a%20Chai-teal)](https://www.buymeacoffee.com/samapriya)
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/samapriya)
 
 
 Aqualink is a philanthropic engineering organization working on building ocean conservation technology. Read more about their [inspiration, smart buoy, and web application](https://aqualink.org/about). This tool is designed to help interact programmatically with the [Aqualink.org map](https://aqualink.org/map) and is not based on any official API so expect features to break once in a while. This tool is designed for only only those sites associated with a spotter or a hobo sensor.
