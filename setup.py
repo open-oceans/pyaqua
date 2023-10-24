@@ -9,23 +9,17 @@ def readme():
 
 setuptools.setup(
     name="pyaqua",
-    version="0.1.0",
+    version="0.2.0",
     packages=find_packages(),
     url="https://github.com/samapriya/pyaqua",
     install_requires=[
         "requests>=2.23.1",
-        "beautifulsoup4>=4.9.3",
         "pandas>=1.3.3",
         "python_dateutil>=2.8.2",
+        "pytz>=2023.3.post1",
         "rapidfuzz>=1.9.0",
         "geojson >= 2.5.0",
         "area >= 1.1.1",
-        "natsort >= 8.1.0",
-        "tenacity >= 8.0.1",
-        'pyproj>=1.9.5.1;platform_system!="Windows"',
-        'geopandas>=0.5.0;platform_system!="Windows"',
-        'shapely<2.0.0;platform_system!="Windows"',
-        'fiona>=1.8.6;platform_system!="Windows"',
     ],
     license="Apache 2.0",
     long_description=open("README.md").read(),
@@ -42,7 +36,7 @@ setuptools.setup(
     ],
     author="Samapriya Roy",
     author_email="samapriya.roy@gmail.com",
-    description="Simple CLI for Aqualink API",
+    description="Simple CLI for Aqualink.org API",
     entry_points={
         "console_scripts": [
             "pyaqua=pyaqua.pyaqua:main",

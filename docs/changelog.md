@@ -1,5 +1,11 @@
 # Changelog
 
+#### v0.2.0
+- Fixed major issues with data parsing and fetching custom timeseries exports
+- Better metadata parsing and handling of time series fields
+- Added support for cleaner logging
+- Fixed alert tooling issues and removed argofloats export tool
+
 #### v0.1.0
 - Fixed issue with Boolean value for payload
 - Fixed metadata parsing and improved logic for time series export

@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 __copyright__ = """
-    Copyright 2021 Samapriya Roy
+    Copyright 2021-2024 Samapriya Roy
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -16,7 +16,9 @@ __license__ = "Apache 2.0"
 
 import argparse
 import datetime
+import io
 import json
+import logging
 import os
 import sys
 import webbrowser
@@ -24,13 +26,15 @@ from collections import Counter
 
 import pandas as pd
 import pkg_resources
+import pytz
 import requests
-from bs4 import BeautifulSoup
 from dateutil.relativedelta import *
-from natsort import natsorted
 from rapidfuzz import fuzz
 
-from .argofloats import argoexp
+# Set a custom log formatter
+logging.basicConfig(
+    level=logging.INFO, format="[%(asctime)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 headers = {
     "authority": "ocean-systems.uc.r.appspot.com",
@@ -68,14 +72,16 @@ ob1 = Solution()
 # Get package version
 
 
+# Get package version
+def version_latest(package):
+    response = requests.get(f"https://pypi.org/pypi/{package}/json")
+    latest_version = response.json()["info"]["version"]
+    return latest_version
+
+
 def pyaqua_version():
-    url = "https://pypi.org/project/pyaqua/"
-    source = requests.get(url)
-    html_content = source.text
-    soup = BeautifulSoup(html_content, "html.parser")
-    company = soup.find("h1")
     vcheck = ob1.compareVersion(
-        company.string.strip().split(" ")[-1],
+        version_latest("pyaqua"),
         pkg_resources.get_distribution("pyaqua").version,
     )
     if vcheck == 1:
@@ -86,7 +92,7 @@ def pyaqua_version():
         print(
             "Current version of pyaqua is {} upgrade to lastest version: {}".format(
                 pkg_resources.get_distribution("pyaqua").version,
-                company.string.strip().split(" ")[-1],
+                version_latest("pyaqua"),
             )
         )
         print(
@@ -100,7 +106,7 @@ def pyaqua_version():
         print(
             "Possibly running staging code {} compared to pypi release {}".format(
                 pkg_resources.get_distribution("pyaqua").version,
-                company.string.strip().split(" ")[-1],
+                version_latest("pyaqua"),
             )
         )
         print(
@@ -114,10 +120,10 @@ pyaqua_version()
 # Go to the readMe
 def readme():
     try:
-        a = webbrowser.open("https://samapriya.github.io/pyaqua/", new=2)
+        a = webbrowser.open("https://pyaqua.openoceans.xyz", new=2)
         if a == False:
             print("Your setup does not have a monitor to display the webpage")
-            print(" Go to {}".format("https://samapriya.github.io/pyaqua/"))
+            print(" Go to {}".format("https://pyaqua.openoceans.xyz"))
     except Exception as e:
         print(e)
 
@@ -187,68 +193,68 @@ def sitealert(level, device):
     if response.status_code == 200:
         for alert_sites in response.json():
             if device == "spotter" and alert_sites["sensorId"] is not None:
-                if alert_sites["collectionData"]["temp_alert"] == 0:
+                if alert_sites["collectionData"]["tempAlert"] == 0:
                     alert_level = "no alert"
-                elif alert_sites["collectionData"]["temp_alert"] == 1:
+                elif alert_sites["collectionData"]["tempAlert"] == 1:
                     alert_level = "watch"
-                elif alert_sites["collectionData"]["temp_alert"] == 2:
+                elif alert_sites["collectionData"]["tempAlert"] == 2:
                     alert_level = "warning"
-                elif alert_sites["collectionData"]["temp_alert"] == 3:
+                elif alert_sites["collectionData"]["tempAlert"] == 3:
                     alert_level = "Level-1"
-                elif alert_sites["collectionData"]["temp_alert"] == 4:
+                elif alert_sites["collectionData"]["tempAlert"] == 4:
                     alert_level = "Level-2"
-                if alert_sites["collectionData"]["temp_alert"] >= level:
+                if alert_sites["collectionData"]["tempAlert"] >= level:
                     sid_list.append(
                         [
                             alert_sites["name"],
                             alert_sites["id"],
-                            alert_sites["collectionData"]["temp_alert"],
+                            alert_sites["collectionData"]["tempAlert"],
                         ]
                     )
                     status_list.append(alert_level)
             elif device == "hobo" and alert_sites["hasHobo"] is True:
-                if alert_sites["collectionData"]["temp_alert"] == 0:
+                if alert_sites["collectionData"]["tempAlert"] == 0:
                     alert_level = "no alert"
-                elif alert_sites["collectionData"]["temp_alert"] == 1:
+                elif alert_sites["collectionData"]["tempAlert"] == 1:
                     alert_level = "watch"
-                elif alert_sites["collectionData"]["temp_alert"] == 2:
+                elif alert_sites["collectionData"]["tempAlert"] == 2:
                     alert_level = "warning"
-                elif alert_sites["collectionData"]["temp_alert"] == 3:
+                elif alert_sites["collectionData"]["tempAlert"] == 3:
                     alert_level = "Level-1"
-                elif alert_sites["collectionData"]["temp_alert"] == 4:
+                elif alert_sites["collectionData"]["tempAlert"] == 4:
                     alert_level = "Level-2"
-                if alert_sites["collectionData"]["temp_alert"] >= level:
+                if alert_sites["collectionData"]["tempAlert"] >= level:
                     hobo_list.append(
                         [
                             alert_sites["name"],
                             alert_sites["id"],
-                            alert_sites["collectionData"]["temp_alert"],
+                            alert_sites["collectionData"]["tempAlert"],
                         ]
                     )
                     status_list.append(alert_level)
             elif device is None:
                 try:
-                    if alert_sites["collectionData"]["temp_alert"] == 0:
+                    if alert_sites["collectionData"]["tempAlert"] == 0:
                         alert_level = "no alert"
-                    elif alert_sites["collectionData"]["temp_alert"] == 1:
+                    elif alert_sites["collectionData"]["tempAlert"] == 1:
                         alert_level = "watch"
-                    elif alert_sites["collectionData"]["temp_alert"] == 2:
+                    elif alert_sites["collectionData"]["tempAlert"] == 2:
                         alert_level = "warning"
-                    elif alert_sites["collectionData"]["temp_alert"] == 3:
+                    elif alert_sites["collectionData"]["tempAlert"] == 3:
                         alert_level = "Level-1"
-                    elif alert_sites["collectionData"]["temp_alert"] == 4:
+                    elif alert_sites["collectionData"]["tempAlert"] == 4:
                         alert_level = "Level-2"
-                    if alert_sites["collectionData"]["temp_alert"] >= level:
+                    if alert_sites["collectionData"]["tempAlert"] >= level:
                         overall_list.append(
                             [
                                 alert_sites["name"],
                                 alert_sites["id"],
-                                alert_sites["collectionData"]["temp_alert"],
+                                alert_sites["collectionData"]["tempAlert"],
                             ]
                         )
                         status_list.append(alert_level)
                 except Exception as e:
-                    print(e)
+                    logging.error(e)
     else:
         sys.exit("\n" + f"Page returned status code :{response.status_code}")
     if device is not None and device == "spotter":
@@ -431,6 +437,10 @@ def sitedaily_from_parser(args):
         end=args.end,
     )
 
+def datetime_to_epoch_milliseconds(dt):
+    epoch = datetime.datetime(1970, 1, 1, tzinfo=pytz.utc)
+    delta = dt - epoch
+    return int(delta.total_seconds() * 1000)
 
 # Function to export time series data from site
 def site_timeseries(delta, sid, dtype, fpath, start, end):
@@ -443,7 +453,7 @@ def site_timeseries(delta, sid, dtype, fpath, start, end):
         d = datetime.datetime.utcnow()
         current_utc = d.strftime("%Y-%m-%dT%H:%M:%SZ")
         if delta is None:
-            delta = 3
+            delta = 12
         past_utc = d + relativedelta(months=-int(delta))
         past_utc = past_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"Time series from {past_utc} to {current_utc}")
@@ -456,56 +466,83 @@ def site_timeseries(delta, sid, dtype, fpath, start, end):
         lat = resp[1]
     if dtype is not None:
         if dtype == "temp":
-            metrics = "bottom_temperature,top_temperature"
+            metrics = "bottom_temperature_spotter,top_temperature_spotter"
         if dtype == "wave":
-            metrics = "significant_wave_height,wave_peak_period,wave_mean_direction"
+            metrics = "significant_wave_height_sofar_model,significant_wave_height_spotter,wave_mean_direction_spotter,wave_mean_direction_sofar_model,wave_mean_period_sofar_model,wave_mean_period_spotter"
         if dtype == "sat_temp":
-            metrics = "satellite_temperature"
+            metrics = "satellite_temperature_noaa"
         if dtype == "wind":
-            metrics = "wind_speed,wind_direction"
+            metrics = "wind_speed_spotter,wind_speed_gfs,wind_direction_gfs,wind_direction_spotter"
         if dtype == "alert":
-            metrics = "alert,weekly_alert"
+            metrics = "temp_alert_noaa,temp_weekly_alert_noaa"
         if dtype == "anomaly":
-            metrics = "sst_anomaly"
+            metrics = "sst_anomaly_noaa"
         if dtype == "dhw":
-            metrics = "dhw"
+            metrics = "dhw_noaa"
+        fname = os.path.join(fpath, f"spotter_{metrics}_{sid}.csv")
     elif dtype is None:
-        metrics = "bottom_temperature,top_temperature,significant_wave_height,wave_peak_period,wave_mean_direction,satellite_temperature,wind_speed,wind_direction,alert,weekly_alert,sst_anomaly,dhw"
+        fname = os.path.join(fpath, f"spotter_all_{sid}.csv")
+
     else:
         print("Datatype is not supported")
-
+    columns = {'top_temperature_spotter': 'top_temperature_spotter',
+                'wave_mean_period_spotter': 'wave_mean_period_spotter',
+                'bottom_temperature_spotter': 'bottom_temperature_spotter',
+                'dhw_noaa': 'dhw_noaa',
+                'significant_wave_height_sofar_model': 'significant_wave_height_sofar_model',
+                'wave_mean_direction_sofar_model': 'wave_mean_direction_sofar_model',
+                'wave_mean_direction_spotter': 'wave_mean_direction_spotter',
+                'satellite_temperature_noaa': 'satellite_temperature_noaa',
+                'wind_direction_spotter': 'wind_direction_spotter',
+                'wave_mean_period_sofar_model': 'wave_mean_period_sofar_model',
+                'wind_speed_gfs': 'wind_speed_gfs',
+                'sst_anomaly_noaa': 'sst_anomaly_noaa',
+                'wind_speed_spotter': 'wind_speed_spotter',
+                'temp_alert_noaa': 'temp_alert_noaa',
+                'temp_weekly_alert_noaa': 'temp_weekly_alert_noaa',
+                'wind_direction_gfs': 'wind_direction_gfs',
+                'significant_wave_height_spotter': 'significant_wave_height_spotter'
+            }
     params = {
         "start": past_utc,
         "end": current_utc,
-        "metrics": metrics,
-        "hourly": "true",
+        'hourly': 'false'
     }
-
     response = requests.get(
         f"https://ocean-systems.uc.r.appspot.com/api/time-series/sites/{sid}",
         headers=headers,
         params=json.dumps(params),
     )
-    metric_list = []
+
     if response.status_code == 200:
-        resp = response.json()
-        for metric in resp:
-            metric_list.append(metric)
-        if dtype is not None and dtype in metric_list:
-            metric_list = [dtype]
-        for metric in natsorted(metric_list):
-            print(f"Processing spotter_{metric}_{sid}")
-            fname = os.path.join(fpath, f"spotter_{metric}_{sid}.csv")
-            try:
-                df = pd.DataFrame(resp[metric]["spotter"]["data"])
-            except Exception as error:
-                df = pd.DataFrame(resp[metric]["noaa"]["data"])
+        try:
+            if dtype is not None:
+                logging.info(f"Processing & creating spotter_{dtype}_{sid}.csv at {fpath}")
+            else:
+                logging.info(f"Processing & creating spotter_all_{sid}.csv at {fpath}")
+            urlData = requests.get(f"https://ocean-systems.uc.r.appspot.com/api/time-series/sites/{sid}/csv").content
+            df = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
             if lat and lng is not None:
                 df["latitude"] = lat
                 df["longitude"] = lng
             df.dropna(axis=1, how="all", inplace=True)
             df = df.loc[:, (df != 0).any(axis=0)]
+            data_columns= df.columns.tolist()
+            #print(data_columns)
+            if dtype is not None:
+                metric_list = metrics.split(",")
+                for metric in metric_list:
+                    if metric in data_columns:
+                        columns.pop(metric)
+                val_list = list(columns.values())
+                df = df.drop(columns=val_list)
+                df['timestamp'] = pd.to_datetime(df['timestamp'])
+                df['system:time_start'] = df['timestamp'].apply(datetime_to_epoch_milliseconds)
+                logging.info(f"Processed a total of {df.shape[0]} rows")
             df.to_csv(fname, index=False)
+        except Exception as error:
+            logging.error(error)
+
     else:
         print(
             f"Time series failed with error: {response.status_code} & {response.text}"
@@ -520,43 +557,6 @@ def timeseries_from_parser(args):
         fpath=args.fpath,
         start=args.start,
         end=args.end,
-    )
-
-
-# Function to export time series data from site
-def site_argofloats(sid, fpath, start, end, radius):
-    response = requests.get(
-        f"https://ocean-systems.uc.r.appspot.com/api/sites/{sid}")
-    if response.status_code == 200:
-        resp = response.json()["polygon"]["coordinates"]
-        lng = resp[0]
-        lat = resp[1]
-    else:
-        sys.exit(
-            f"Failed to fetch {sid} coordinates with error: {response.status_code}"
-        )
-    try:
-        argoexp(
-            fpath=fpath,
-            lat=lat,
-            lng=lng,
-            start=start,
-            end=end,
-            radius=radius,
-            geometry=None,
-            plid=None,
-        )
-    except Exception as e:
-        print(e)
-
-
-def argo_from_parser(args):
-    site_argofloats(
-        sid=args.sid,
-        start=args.start,
-        end=args.end,
-        fpath=args.fpath,
-        radius=args.radius,
     )
 
 
@@ -677,26 +677,6 @@ def main(args=None):
     )
 
     parser_timeseries.set_defaults(func=timeseries_from_parser)
-
-    parser_argo = subparsers.add_parser(
-        "site-argo", help="Exports coincident argofloat data for a site"
-    )
-    required_named = parser_argo.add_argument_group(
-        "Required named arguments.")
-    required_named.add_argument("--sid", help="Site ID", required=True)
-    required_named.add_argument(
-        "--start", help="Start date in format YYYY-MM-DD", required=True
-    )
-    required_named.add_argument(
-        "--end", help="End date in format YYYY-MM-DD", required=True
-    )
-    required_named.add_argument(
-        "--fpath", help="Folder path for export", required=True)
-    optional_named = parser_argo.add_argument_group("Optional named arguments")
-    optional_named.add_argument(
-        "--radius", help="Search radius in kilometers", default=None
-    )
-    parser_argo.set_defaults(func=argo_from_parser)
 
     args = parser.parse_args()
 
