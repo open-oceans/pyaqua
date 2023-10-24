@@ -7,7 +7,7 @@
 [![Donate](https://img.shields.io/badge/Donate-Buy%20me%20a%20Coffee-teal)](https://www.buymeacoffee.com/samapriya)
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/samapriya)
 [![Hits-of-Code](https://hitsofcode.com/github/open-oceans/pyaqua?branch=main)](https://hitsofcode.com/github/open-oceans/pyaqua?branch=main)
-[![CI pyaqua](https://github.com/open-oceans/actions/workflows/package_ci.yml/badge.svg)](https://github.com/open-oceans/pyaqua/actions/workflows/package_ci.yml)
+[![CI pyaqua](https://github.com/open-oceans/pyaqua/actions/workflows/package_ci.yml/badge.svg)](https://github.com/open-oceans/pyaqua/actions/workflows/package_ci.yml)
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 [![Downloads](https://pepy.tech/badge/pyaqua/month)](https://pepy.tech/project/pyaqua)
