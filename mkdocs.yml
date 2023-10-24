@@ -137,5 +137,4 @@ nav:
   - Site Data:
       - Daily Data for Site: projects/site-daily.md
       - Time Series data for Site: projects/site-timeseries.md
-      - Argofloat data for Site: projects/site-argo.md
   - Changelog: changelog.md

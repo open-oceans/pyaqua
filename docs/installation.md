@@ -26,19 +26,22 @@ I recommend installation within a virtual environment. Find more information on 
 As usual, to print help:
 
 ```
-usage: pyaqua [-h] {site-list,site-live,site-daily,site-timeseries} ...
+pyaqua -h
+usage: pyaqua [-h] {readme,site-list,site-alert,site-info,site-live,site-daily,site-timeseries} ...
 
 Simple CLI for Aqualink API
 
 positional arguments:
-  {site-list,site-info,site-live,site-daily,site-timeseries}
+  {readme,site-list,site-alert,site-info,site-live,site-daily,site-timeseries}
+    readme              Go to the web based pyaqua readme page
     site-list           Print lists of Site Name and ID with spotters
+    site-alert          Print site alerts for sites with spotters
     site-info           Print detailed information for a site
     site-live           Get most recent/live info from a site
     site-daily          Print daily data info for a site
     site-timeseries     Exports timeseries data for a site
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
 ```
 
