@@ -1,8 +1,13 @@
 # pyaqua: Simple CLI for Aqualink.org API
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=plastic&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/samapriya/)
+[![Medium](https://img.shields.io/badge/Medium-12100E?style=flat&logo=medium&logoColor=white)](https://medium.com/@samapriyaroy)
 [![Twitter URL](https://img.shields.io/twitter/follow/samapriyaroy?style=social)](https://twitter.com/intent/follow?screen_name=samapriyaroy)
-[![Hits-of-Code](https://hitsofcode.com/github/samapriya/pyaqua?branch=main)](https://hitsofcode.com/github/samapriya/pyaqua?branch=main)
-[![CI pyaqua](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml/badge.svg)](https://github.com/samapriya/pyaqua/actions/workflows/package_ci.yml)
+[![Mastodon Follow](https://img.shields.io/mastodon/follow/109627075086849826?domain=https%3A%2F%2Fmapstodon.space%2F)](https://mapstodon.space/@samapriya)
+[![Donate](https://img.shields.io/badge/Donate-Buy%20me%20a%20Coffee-teal)](https://www.buymeacoffee.com/samapriya)
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/samapriya)
+[![Hits-of-Code](https://hitsofcode.com/github/open-oceans/pyaqua?branch=main)](https://hitsofcode.com/github/open-oceans/pyaqua?branch=main)
+[![CI pyaqua](https://github.com/open-oceans/actions/workflows/package_ci.yml/badge.svg)](https://github.com/open-oceans/pyaqua/actions/workflows/package_ci.yml)
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 [![Downloads](https://pepy.tech/badge/pyaqua/month)](https://pepy.tech/project/pyaqua)
