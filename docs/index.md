@@ -11,7 +11,7 @@
 ![PyPI - License](https://img.shields.io/pypi/l/pyaqua)
 ![PyPI](https://img.shields.io/pypi/v/pyaqua)
 [![Downloads](https://pepy.tech/badge/pyaqua/month)](https://pepy.tech/project/pyaqua)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7123727.svg)](https://doi.org/10.5281/zenodo.7123727)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10046157.svg)](https://doi.org/10.5281/zenodo.10046157)
 [![Donate](https://img.shields.io/badge/Donate-Buy%20me%20a%20Chai-teal)](https://www.buymeacoffee.com/samapriya)
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/samapriya)
 
@@ -23,6 +23,6 @@ Aqualink is a philanthropic engineering organization working on building ocean c
 #### Citation
 
 ```
-Samapriya Roy. (2022). samapriya/pyaqua: Simple CLI for Aqualink Org (0.1.0).
-Zenodo. https://doi.org/10.5281/zenodo.7123727
+Samapriya Roy. (2023). open-oceans/pyaqua: Simple CLI for Aqualink Org (0.2.0).
+Zenodo. https://doi.org/10.5281/zenodo.10046157
 ```
